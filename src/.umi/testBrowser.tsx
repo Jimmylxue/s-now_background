@@ -9,7 +9,7 @@ import { createPluginManager } from './core/plugin';
 import { getRoutes } from './core/route';
 import type { Location } from 'history';
 
-import '/Users/mac/Desktop/code/background/snow-background/src/global.less';
+import '/Users/mac/Desktop/code/background/snow-background/src/global.css';
 import '/Users/mac/Desktop/code/background/snow-background/src/global.tsx';
 import 'antd/dist/reset.css';
 const publicPath = '/';

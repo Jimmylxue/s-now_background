@@ -1,33 +1,20 @@
-import {
-  useAddLetter,
-  useDelLetter,
-  useEditLetter,
-  useLetterList,
-  useSendLetter,
-} from '@/services/letter';
-import {
-  EStatus,
-  TLetterItem,
-  TLetterListParams,
-  TLetterRecordUserParams,
-  platformConst,
-} from '@/services/letter/type';
+import { TLetterListParams, TLetterRecordUserParams } from '@/services/letter/type';
 import { PlusOutlined } from '@ant-design/icons';
-import { ProColumns, ModalForm, ProFormTextArea } from '@ant-design/pro-components';
+import { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Popconfirm, Select, message } from 'antd';
+import { Button, Input, Popconfirm, Select, message } from 'antd';
 import React, { useRef, useState } from 'react';
-import { LetterModal } from './components/LetterModal';
-import { useForm } from 'antd/es/form/Form';
+import { UserModal } from './components/UserModal';
 import { RecordModal } from './components/RecordModal';
+import { useAddUser, useDelUser, useEditUser, useMemberList } from '@/services/member';
+import { Sex, TUser, sexConst } from '@/services/member/type';
+import { baseFormatTime } from '@/utils/time';
 
 const MemberList: React.FC = () => {
   const formType = useRef<'ADD' | 'EDIT'>('ADD');
-  const chooseLetter = useRef<TLetterItem>();
+  const chooseUser = useRef<TUser>();
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const [sendShow, setSendShow] = useState<boolean>(false);
-  const [form] = useForm();
 
   const [recordUserShow, setRecordUserShow] = useState<boolean>(false);
   const recordUserParams = useRef<TLetterRecordUserParams>();
@@ -37,7 +24,7 @@ const MemberList: React.FC = () => {
     pageSize: 10,
   });
 
-  const { data, refetch } = useLetterList(['letterList', params], params, {
+  const { data, refetch } = useMemberList(['memberList', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
@@ -49,112 +36,100 @@ const MemberList: React.FC = () => {
     refetch();
   };
 
-  const { mutateAsync } = useAddLetter({
+  const { mutateAsync } = useAddUser({
     onSuccess: successCallBack,
   });
-  const { mutateAsync: editLetter } = useEditLetter({
-    onSuccess: successCallBack,
-  });
-
-  const { mutateAsync: delLetter } = useDelLetter({
+  const { mutateAsync: editUser } = useEditUser({
     onSuccess: successCallBack,
   });
 
-  const { mutateAsync: sendLetter } = useSendLetter({
+  const { mutateAsync: delUser } = useDelUser({
     onSuccess: successCallBack,
   });
 
-  const columns: ProColumns<TLetterItem>[] = [
+  const columns: ProColumns<TUser>[] = [
     {
-      title: '标题',
-      dataIndex: 'title',
-      tip: 'The rule name is the unique key',
+      title: '用户',
+      dataIndex: 'id',
+      width: 300,
+      render: (_, { avatar, username }) => {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={avatar} alt="" className=" rounded-full size-[50px]" />
+            <span className=" ml-2">{username}</span>
+          </div>
+        );
+      },
     },
     {
-      title: '发送目标平台',
-      dataIndex: 'platform',
-      renderText: (platform: number) => (platform === 0 ? 'todoList' : 'snowMemo'),
+      title: '性别',
+      dataIndex: 'sex',
+      width: 80,
+      renderText: (_, { sex }) => (sex === Sex.男 ? '男' : sex === Sex.女 ? '女' : '-'),
       renderFormItem() {
-        return <Select style={{ width: 120 }} options={platformConst} />;
+        return <Select options={sexConst} />;
       },
     },
     {
-      title: '已读用户数',
-      dataIndex: 'hasReadCount',
-      render: (val, { letterId }) => {
-        return (
-          <a
-            onClick={() => {
-              recordUserParams.current = {
-                letterId,
-                status: EStatus.已读,
-              };
-              setRecordUserShow(true);
-            }}
-          >
-            {val}
-          </a>
-        );
+      title: '邮箱',
+      dataIndex: 'mail',
+      width: 150,
+      renderText: (mail) => mail || '-',
+      renderFormItem() {
+        return <Input />;
       },
-      search: false,
     },
     {
-      title: '未读用户数',
-      dataIndex: 'notReadCount',
-      render: (val, { letterId }) => {
-        return (
-          <a
-            onClick={() => {
-              recordUserParams.current = {
-                letterId,
-                status: EStatus.未读,
-              };
-              setRecordUserShow(true);
-            }}
-          >
-            {val}
-          </a>
-        );
+      title: '手机号',
+      dataIndex: 'phone',
+      width: 150,
+      renderText: (phone) => phone || '-',
+      renderFormItem() {
+        return <Input />;
       },
-      search: false,
     },
     {
-      title: '创建时间',
-      dataIndex: 'createdTime',
+      title: 'openid',
+      dataIndex: 'openid',
+      width: 300,
+      renderText: (openid) => openid || '-',
+      renderFormItem() {
+        return <Input />;
+      },
+    },
+    {
+      title: '注册时间',
+      dataIndex: 'createTime',
       search: false,
+      renderText: (val) => {
+        return baseFormatTime(val);
+      },
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
-        <a
-          onClick={() => {
-            chooseLetter.current = record;
-            setSendShow(true);
-          }}
-        >
-          发布
-        </a>,
-        <a
+        <Button
+          type="primary"
           onClick={() => {
             formType.current = 'EDIT';
-            chooseLetter.current = record;
+            chooseUser.current = record;
             setFormOpen(true);
           }}
         >
           编辑
-        </a>,
+        </Button>,
         <Popconfirm
           placement="top"
           title={'确定删除吗？'}
           okText="Yes"
           cancelText="No"
           onConfirm={async () => {
-            await delLetter({ letterId: record.letterId });
+            await delUser({ id: record.id });
           }}
         >
-          <a>删除</a>
+          <Button type="primary">删除</Button>
         </Popconfirm>,
       ],
     },
@@ -162,9 +137,9 @@ const MemberList: React.FC = () => {
   return (
     <>
       <PageContainer>
-        <ProTable<TLetterItem, API.PageParams>
-          headerTitle={'站内信列表'}
-          key={'letterId'}
+        <ProTable<TUser, API.PageParams>
+          headerTitle={'用户列表'}
+          key={'id'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
             total: data?.total,
@@ -186,7 +161,7 @@ const MemberList: React.FC = () => {
               key="primary"
               onClick={() => {
                 formType.current = 'ADD';
-                chooseLetter.current = undefined;
+                chooseUser.current = undefined;
                 setFormOpen(true);
               }}
             >
@@ -195,14 +170,14 @@ const MemberList: React.FC = () => {
           ]}
           columns={columns}
         />
-        <LetterModal
+        <UserModal
           type="ADD"
-          letter={chooseLetter.current}
+          user={chooseUser.current}
           onOk={async (values) => {
             if (formType.current === 'ADD') {
-              await mutateAsync(values);
+              await mutateAsync({ ...values, password: btoa(values.password) });
             } else {
-              await editLetter({ ...values, letterId: chooseLetter.current?.letterId });
+              await editUser({ ...values, id: chooseUser.current?.id });
             }
 
             setFormOpen(false);
@@ -212,38 +187,6 @@ const MemberList: React.FC = () => {
           }}
           open={formOpen}
         />
-        <ModalForm
-          form={form}
-          title={'新建规则'}
-          width="400px"
-          open={sendShow}
-          onOpenChange={(status) => {
-            form.resetFields();
-            if (status === false) {
-              setSendShow(false);
-            }
-          }}
-          onFinish={async (value) => {
-            const userIds = value.userIds.split('|').map(Number);
-            await sendLetter({
-              letterId: chooseLetter.current?.letterId!,
-              userIds,
-            });
-            setSendShow(false);
-          }}
-        >
-          <ProFormTextArea
-            rules={[
-              {
-                required: true,
-                message: '用户id为必填项',
-              },
-            ]}
-            width="md"
-            name="userIds"
-            placeholder="请输入用户id，并使用|隔开"
-          />
-        </ModalForm>
         <RecordModal
           params={recordUserParams.current}
           open={recordUserShow}

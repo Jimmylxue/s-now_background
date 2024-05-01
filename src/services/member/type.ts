@@ -1,17 +1,23 @@
 import { TPageListType } from '../type';
 
-export type TAddUser = Omit<TUser, 'username' | 'phone' | 'avatar'>;
+export type TAddUser = Omit<TUser, 'username' | 'phone' | 'avatar'> & { password: string };
 
 export type TEditUser = Omit<TUser, 'id'>;
 
-export const platformConst = [
+export enum Sex {
+  '未知',
+  '男',
+  '女',
+}
+
+export const sexConst = [
   {
-    label: 'TodoList',
-    value: 0,
+    label: '男',
+    value: Sex.男,
   },
   {
-    label: 'SnowMemo',
-    value: 1,
+    label: '女',
+    value: Sex.女,
   },
 ];
 
@@ -52,7 +58,7 @@ export type TUser = {
   id: number;
   username: string;
   avatar?: string;
-  sex: 1 | 0;
+  sex: Sex;
   phone?: string;
   mail?: string;
 };

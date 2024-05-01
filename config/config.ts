@@ -148,4 +148,5 @@ export default defineConfig({
   },
   esbuildMinifyIIFE: true,
   requestRecord: {},
+  extraPostCSSPlugins: [require('tailwindcss')],
 });

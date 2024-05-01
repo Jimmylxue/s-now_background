@@ -17,29 +17,16 @@ export function useMemberList(
 ) {
   return useQuery<TPageData<TUser[]>, ClientError>(
     queryKey,
-    () => post('/message/list', variable),
+    () => post('/user/list', variable),
     config,
   );
 }
 
-export function useAddUser(
-  options?: UseMutationOptions<
-    {
-      code: number;
-      result: string;
-    },
-    ClientError,
-    TAddUser
-  >,
-) {
-  return useMutation<
-    {
-      code: number;
-      result: string;
-    },
-    ClientError,
-    TAddUser
-  >((data) => post('/message/add', data), options);
+export function useAddUser(options?: UseMutationOptions<boolean, ClientError, TAddUser>) {
+  return useMutation<boolean, ClientError, TAddUser>(
+    (data) => post('/user/register', data),
+    options,
+  );
 }
 
 export function useEditUser(
@@ -59,31 +46,25 @@ export function useEditUser(
     },
     ClientError,
     TEditUser
-  >((data) => post('/message/update', data), options);
+  >((data) => post('/user/edit', data), options);
 }
 
 export function useDelUser(
   options?: UseMutationOptions<
-    {
-      code: number;
-      result: string;
-    },
+    boolean,
     ClientError,
     {
-      userId: number;
+      id: number;
     }
   >,
 ) {
   return useMutation<
-    {
-      code: number;
-      result: string;
-    },
+    boolean,
     ClientError,
     {
-      userId: number;
+      id: number;
     }
-  >((data) => post('/message/del', data), options);
+  >((data) => post('/user/del', data), options);
 }
 
 export function useSendLetter(
