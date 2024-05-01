@@ -109,8 +109,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children) => {
-      console.log('childrenchildrenchildren', children);
+    childrenRender: (children, props) => {
+      console.log('ppp', props);
       // if (initialState?.loading) return <PageLoading />;
       return (
         <QueryClientProvider client={queryClient}>

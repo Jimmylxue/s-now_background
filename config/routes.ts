@@ -9,7 +9,8 @@ export default [
     path: '/admin',
     name: '管理页',
     icon: 'crown',
-    // access: 'canAdmin',
+    // 权限通过 src/access.ts 模块进行判断
+    access: 'canAdmin',
     routes: [
       { path: '/admin', redirect: '/admin/sub-page' },
       { path: '/admin/sub-page', name: '二级管理页', component: './Admin' },
@@ -25,7 +26,6 @@ export default [
       {
         path: '/manage/letter',
         name: '站内信',
-        hideChildrenInMenu: true,
         component: './Manage/Letter',
       },
     ],
