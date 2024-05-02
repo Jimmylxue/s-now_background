@@ -54,7 +54,7 @@ export default [
   },
 
   {
-    path: '/user',
+    path: '/user/member',
     name: '用户管理',
     icon: 'smile',
     component: './User/Member',
@@ -74,13 +74,14 @@ export default [
     component: './AppealCase',
     access: 'isAdmin',
   },
-  {
-    path: '/caseHistory',
-    name: '历史案件管理',
-    icon: 'smile',
-    component: './CaseHistory',
-    access: 'isAdmin',
-  },
+  // 历史案件管理就是公式大厅
+  // {
+  //   path: '/caseHistory',
+  //   name: '历史案件管理',
+  //   icon: 'smile',
+  //   component: './CaseHistory',
+  //   access: 'isAdmin',
+  // },
 
   {
     path: '/pubHall',

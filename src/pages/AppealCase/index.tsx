@@ -134,23 +134,15 @@ const TableList: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
-        <a
+        <Button
+          type="primary"
           onClick={() => {
             chooseLetter.current = record;
             setSendShow(true);
           }}
         >
-          发布
-        </a>,
-        <a
-          onClick={() => {
-            formType.current = 'EDIT';
-            chooseLetter.current = record;
-            setFormOpen(true);
-          }}
-        >
-          编辑
-        </a>,
+          开庭
+        </Button>,
         <Popconfirm
           placement="top"
           title={'确定删除吗？'}
@@ -160,7 +152,7 @@ const TableList: React.FC = () => {
             await delLetter({ letterId: record.letterId });
           }}
         >
-          <a>删除</a>
+          <Button type="primary">删除</Button>
         </Popconfirm>,
       ],
     },

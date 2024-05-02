@@ -12,17 +12,10 @@ import {
   TLetterRecordUserParams,
   platformConst,
 } from '@/services/letter/type';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  ActionType,
-  ProColumns,
-  ModalForm,
-  ProFormText,
-  ProFormTextArea,
-} from '@ant-design/pro-components';
+import { ProColumns, ModalForm, ProFormTextArea } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Popconfirm, Select, message } from 'antd';
+import { Button, Modal, Popconfirm, Select, Table, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { LetterModal } from './components/LetterModal';
 import { useForm } from 'antd/es/form/Form';
@@ -32,7 +25,8 @@ const TableList: React.FC = () => {
   const formType = useRef<'ADD' | 'EDIT'>('ADD');
   const chooseLetter = useRef<TLetterItem>();
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const [sendShow, setSendShow] = useState<boolean>(false);
+  const [commentShow, setCommentShow] = useState<boolean>(false);
+  const [sendCommentShow, setSendCommentShow] = useState<boolean>(false);
   const [form] = useForm();
 
   const [recordUserShow, setRecordUserShow] = useState<boolean>(false);
@@ -74,7 +68,6 @@ const TableList: React.FC = () => {
     {
       title: '标题',
       dataIndex: 'title',
-      tip: 'The rule name is the unique key',
     },
     {
       title: '发送目标平台',
@@ -134,33 +127,26 @@ const TableList: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
-        <a
+        <Button
+          type="primary"
           onClick={() => {
             chooseLetter.current = record;
-            setSendShow(true);
+            setCommentShow(true);
           }}
         >
-          发布
-        </a>,
-        <a
-          onClick={() => {
-            formType.current = 'EDIT';
-            chooseLetter.current = record;
-            setFormOpen(true);
-          }}
-        >
-          编辑
-        </a>,
+          查看评论
+        </Button>,
+
         <Popconfirm
           placement="top"
           title={'确定删除吗？'}
-          okText="Yes"
-          cancelText="No"
+          okText="确定"
+          cancelText="取消"
           onConfirm={async () => {
             await delLetter({ letterId: record.letterId });
           }}
         >
-          <a>删除</a>
+          <Button type="primary">删除</Button>
         </Popconfirm>,
       ],
     },
@@ -169,7 +155,7 @@ const TableList: React.FC = () => {
     <>
       <PageContainer>
         <ProTable<TLetterItem, API.PageParams>
-          headerTitle={'站内信列表'}
+          headerTitle={'公示案件列表'}
           key={'letterId'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
@@ -186,19 +172,6 @@ const TableList: React.FC = () => {
             setParams({ ...params, page: current, pageSize });
           }}
           dataSource={data?.result || []}
-          toolBarRender={() => [
-            <Button
-              type="primary"
-              key="primary"
-              onClick={() => {
-                formType.current = 'ADD';
-                chooseLetter.current = undefined;
-                setFormOpen(true);
-              }}
-            >
-              <PlusOutlined /> 新建
-            </Button>,
-          ]}
           columns={columns}
         />
         <LetterModal
@@ -218,15 +191,69 @@ const TableList: React.FC = () => {
           }}
           open={formOpen}
         />
+        {/* <Modal title={'评论区'} width="700px" open={sendShow}> */}
+        <Modal
+          title={'评论区'}
+          width="700px"
+          open={commentShow}
+          onCancel={() => {
+            setCommentShow(false);
+          }}
+        >
+          <div className="flex justify-end mb-2">
+            <Button
+              type="primary"
+              onClick={() => {
+                setSendCommentShow(true);
+              }}
+            >
+              我也说两句
+            </Button>
+          </div>
+          <Table
+            dataSource={[
+              {
+                key: '1',
+                name: '胡彦斌',
+                age: 32,
+                address: '西湖区湖底公园1号',
+              },
+              {
+                key: '2',
+                name: '胡彦祖',
+                age: 42,
+                address: '西湖区湖底公园1号',
+              },
+            ]}
+            columns={[
+              {
+                title: '姓名',
+                dataIndex: 'name',
+                key: 'name',
+              },
+              {
+                title: '年龄',
+                dataIndex: 'age',
+                key: 'age',
+              },
+              {
+                title: '住址',
+                dataIndex: 'address',
+                key: 'address',
+              },
+            ]}
+          />
+        </Modal>
+
         <ModalForm
           form={form}
-          title={'新建规则'}
+          title={'发起评论'}
           width="400px"
-          open={sendShow}
+          open={sendCommentShow}
           onOpenChange={(status) => {
             form.resetFields();
             if (status === false) {
-              setSendShow(false);
+              setSendCommentShow(false);
             }
           }}
           onFinish={async (value) => {
@@ -235,19 +262,19 @@ const TableList: React.FC = () => {
               letterId: chooseLetter.current?.letterId!,
               userIds,
             });
-            setSendShow(false);
+            setSendCommentShow(false);
           }}
         >
           <ProFormTextArea
             rules={[
               {
                 required: true,
-                message: '用户id为必填项',
+                message: '请输入评论内容',
               },
             ]}
             width="md"
             name="userIds"
-            placeholder="请输入用户id，并使用|隔开"
+            placeholder="请输入评论内容"
           />
         </ModalForm>
         <RecordModal

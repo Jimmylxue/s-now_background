@@ -169,7 +169,7 @@ const TableList: React.FC = () => {
     <>
       <PageContainer>
         <ProTable<TLetterItem, API.PageParams>
-          headerTitle={'站内信列表'}
+          headerTitle={'案件列表'}
           key={'letterId'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,

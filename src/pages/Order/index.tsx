@@ -27,6 +27,7 @@ import React, { useRef, useState } from 'react';
 import { LetterModal } from './components/LetterModal';
 import { useForm } from 'antd/es/form/Form';
 import { RecordModal } from './components/RecordModal';
+import { usePermission } from '@/core/permission';
 
 const TableList: React.FC = () => {
   const formType = useRef<'ADD' | 'EDIT'>('ADD');
@@ -42,6 +43,8 @@ const TableList: React.FC = () => {
     page: 1,
     pageSize: 10,
   });
+
+  const { isAdmin, isJudge, isUser } = usePermission();
 
   const { data, refetch } = useLetterList(['letterList', params], params, {
     onSuccess: () => {},
@@ -134,23 +137,15 @@ const TableList: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
-        <a
+        <Button
+          type="primary"
           onClick={() => {
             chooseLetter.current = record;
             setSendShow(true);
           }}
         >
-          发布
-        </a>,
-        <a
-          onClick={() => {
-            formType.current = 'EDIT';
-            chooseLetter.current = record;
-            setFormOpen(true);
-          }}
-        >
-          编辑
-        </a>,
+          申诉
+        </Button>,
         <Popconfirm
           placement="top"
           title={'确定删除吗？'}
@@ -160,7 +155,7 @@ const TableList: React.FC = () => {
             await delLetter({ letterId: record.letterId });
           }}
         >
-          <a>删除</a>
+          <Button type="primary">删除</Button>
         </Popconfirm>,
       ],
     },
@@ -169,7 +164,7 @@ const TableList: React.FC = () => {
     <>
       <PageContainer>
         <ProTable<TLetterItem, API.PageParams>
-          headerTitle={'站内信列表'}
+          headerTitle={'订单列表'}
           key={'letterId'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
