@@ -4,23 +4,25 @@
 import React from 'react';
 
 export async function getRoutes() {
-  const routes = {"1":{"path":"/user","layout":false,"id":"1"},"2":{"name":"登录","path":"/user/login","parentId":"1","id":"2"},"3":{"path":"/welcome","name":"欢迎","icon":"smile","parentId":"ant-design-pro-layout","id":"3"},"4":{"path":"/admin","name":"管理页","icon":"crown","access":"canAdmin","parentId":"ant-design-pro-layout","id":"4"},"5":{"path":"/admin","redirect":"/admin/sub-page","parentId":"4","id":"5"},"6":{"path":"/admin/sub-page","name":"二级管理页","parentId":"4","id":"6"},"7":{"path":"/manage","name":"系统管理","icon":"crown","parentId":"ant-design-pro-layout","id":"7"},"8":{"path":"/manage","redirect":"/admin/letter","parentId":"7","id":"8"},"9":{"path":"/manage/letter","name":"站内信","parentId":"7","id":"9"},"10":{"path":"/member","name":"会员管理","icon":"crown","parentId":"ant-design-pro-layout","id":"10"},"11":{"name":"查询表格","icon":"table","path":"/list","parentId":"ant-design-pro-layout","id":"11"},"12":{"path":"/","redirect":"/welcome","parentId":"ant-design-pro-layout","id":"12"},"13":{"path":"*","layout":false,"id":"13"},"ant-design-pro-layout":{"id":"ant-design-pro-layout","path":"/","isLayout":true},"umi/plugin/openapi":{"path":"/umi/plugin/openapi","id":"umi/plugin/openapi"}} as const;
+  const routes = {"1":{"path":"/user","layout":false,"id":"1"},"2":{"name":"登录","path":"/user/login","parentId":"1","id":"2"},"3":{"path":"/welcome","name":"欢迎","icon":"smile","parentId":"ant-design-pro-layout","id":"3"},"4":{"path":"/chooseRole","menuRender":false,"hideInMenu":true,"name":"角色选择","icon":"smile","parentId":"ant-design-pro-layout","id":"4"},"5":{"path":"/exam","name":"考试答题","icon":"experimentOutlined","access":"isJudge","parentId":"ant-design-pro-layout","id":"5"},"6":{"path":"/caseHall","name":"案件大厅","icon":"smile","access":"isJudge","parentId":"ant-design-pro-layout","id":"6"},"7":{"path":"/myCase","name":"我的案件","icon":"smile","access":"hasMyCase","parentId":"ant-design-pro-layout","id":"7"},"8":{"path":"/order","name":"我的订单","icon":"smile","access":"isUser","parentId":"ant-design-pro-layout","id":"8"},"9":{"path":"/user","name":"用户管理","icon":"smile","access":"isAdmin","parentId":"ant-design-pro-layout","id":"9"},"10":{"path":"/examCase","name":"考试题目管理","icon":"smile","access":"isAdmin","parentId":"ant-design-pro-layout","id":"10"},"11":{"path":"/appealCase","name":"申诉案件管理","icon":"smile","access":"isAdmin","parentId":"ant-design-pro-layout","id":"11"},"12":{"path":"/caseHistory","name":"历史案件管理","icon":"smile","access":"isAdmin","parentId":"ant-design-pro-layout","id":"12"},"13":{"path":"/pubHall","name":"公示大厅","icon":"smile","parentId":"ant-design-pro-layout","id":"13"},"14":{"path":"/","redirect":"/welcome","parentId":"ant-design-pro-layout","id":"14"},"15":{"path":"*","layout":false,"id":"15"},"ant-design-pro-layout":{"id":"ant-design-pro-layout","path":"/","isLayout":true},"umi/plugin/openapi":{"path":"/umi/plugin/openapi","id":"umi/plugin/openapi"}} as const;
   return {
     routes,
     routeComponents: {
 '1': React.lazy(() => import('./EmptyRoute')),
 '2': React.lazy(() => import(/* webpackChunkName: "p__User__Login__index" */'@/pages/User/Login/index.tsx')),
 '3': React.lazy(() => import(/* webpackChunkName: "p__Welcome" */'@/pages/Welcome.tsx')),
-'4': React.lazy(() => import('./EmptyRoute')),
-'5': React.lazy(() => import('./EmptyRoute')),
-'6': React.lazy(() => import(/* webpackChunkName: "p__Admin" */'@/pages/Admin.tsx')),
-'7': React.lazy(() => import('./EmptyRoute')),
-'8': React.lazy(() => import('./EmptyRoute')),
-'9': React.lazy(() => import(/* webpackChunkName: "p__Manage__Letter__index" */'@/pages/Manage/Letter/index.tsx')),
-'10': React.lazy(() => import(/* webpackChunkName: "p__User__Member__index" */'@/pages/User/Member/index.tsx')),
-'11': React.lazy(() => import(/* webpackChunkName: "p__TableList__index" */'@/pages/TableList/index.tsx')),
-'12': React.lazy(() => import('./EmptyRoute')),
-'13': React.lazy(() => import(/* webpackChunkName: "p__404" */'@/pages/404.tsx')),
+'4': React.lazy(() => import(/* webpackChunkName: "p__ChooseRole__index" */'@/pages/ChooseRole/index.tsx')),
+'5': React.lazy(() => import(/* webpackChunkName: "p__Exam__index" */'@/pages/Exam/index.tsx')),
+'6': React.lazy(() => import(/* webpackChunkName: "p__CaseHall__index" */'@/pages/CaseHall/index.tsx')),
+'7': React.lazy(() => import(/* webpackChunkName: "p__MyCase__index" */'@/pages/MyCase/index.tsx')),
+'8': React.lazy(() => import(/* webpackChunkName: "p__Order__index" */'@/pages/Order/index.tsx')),
+'9': React.lazy(() => import(/* webpackChunkName: "p__User__Member__index" */'@/pages/User/Member/index.tsx')),
+'10': React.lazy(() => import(/* webpackChunkName: "p__ExamCase__index" */'@/pages/ExamCase/index.tsx')),
+'11': React.lazy(() => import(/* webpackChunkName: "p__AppealCase__index" */'@/pages/AppealCase/index.tsx')),
+'12': React.lazy(() => import(/* webpackChunkName: "p__CaseHistory__index" */'@/pages/CaseHistory/index.tsx')),
+'13': React.lazy(() => import(/* webpackChunkName: "p__PubHall__index" */'@/pages/PubHall/index.tsx')),
+'14': React.lazy(() => import('./EmptyRoute')),
+'15': React.lazy(() => import(/* webpackChunkName: "p__404" */'@/pages/404.tsx')),
 'ant-design-pro-layout': React.lazy(() => import(/* webpackChunkName: "umi__plugin-layout__Layout" */'/Users/mac/Desktop/code/background/snow-background/src/.umi/plugin-layout/Layout.tsx')),
 'umi/plugin/openapi': React.lazy(() => import(/* webpackChunkName: "umi__plugin-openapi__openapi" */'/Users/mac/Desktop/code/background/snow-background/src/.umi/plugin-openapi/openapi.tsx')),
 },
