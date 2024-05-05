@@ -1,3 +1,4 @@
+import { ERole } from '../login';
 import { TPageListType } from '../type';
 
 export type TAddUser = Omit<TUser, 'username' | 'phone' | 'avatar'> & { password: string };
@@ -18,6 +19,25 @@ export const sexConst = [
   {
     label: '女',
     value: Sex.女,
+  },
+];
+
+export const roleConst = [
+  {
+    label: '管理员',
+    value: ERole.管理员,
+  },
+  {
+    label: '法官',
+    value: ERole.法官,
+  },
+  {
+    label: '买家',
+    value: ERole.买家,
+  },
+  {
+    label: '卖家',
+    value: ERole.卖家,
   },
 ];
 

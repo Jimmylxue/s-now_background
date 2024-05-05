@@ -1,18 +1,17 @@
 import { TLoginUser } from '@/services/login';
-import { Sex } from '@/services/member/type';
+import { Sex, TUser } from '@/services/member/type';
 import { Form, Input, Modal, Select } from 'antd';
 import { useEffect } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 type TProps = {
-  type: 'ADD' | 'EDIT';
   open: boolean;
   onOk: (values: any) => void;
   onCancel: () => void;
   user?: TLoginUser;
 };
 
-export function UserModal({ open, onOk, onCancel, type, user }: TProps) {
+export function UserSettingModal({ open, onOk, onCancel, user }: TProps) {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -24,12 +23,7 @@ export function UserModal({ open, onOk, onCancel, type, user }: TProps) {
   }, [user]);
 
   return (
-    <Modal
-      title={type === 'ADD' ? '添加用户' : '编辑用户'}
-      open={open}
-      onOk={form.submit}
-      onCancel={onCancel}
-    >
+    <Modal title={'设置个人信息'} open={open} onOk={form.submit} onCancel={onCancel}>
       <Form
         form={form}
         onFinish={(values) => {
@@ -56,9 +50,9 @@ export function UserModal({ open, onOk, onCancel, type, user }: TProps) {
             ]}
           />
         </Form.Item>
-        {/* <Form.Item name="password" label="密码" rules={[{ required: true }]}>
+        <Form.Item name="password" label="密码" rules={[{ required: true }]}>
           <Input />
-        </Form.Item> */}
+        </Form.Item>
       </Form>
     </Modal>
   );

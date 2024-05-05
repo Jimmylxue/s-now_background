@@ -12,12 +12,12 @@ export interface ResultData<T = any> extends Result {
 }
 
 export type TPageListType = {
-  page: number;
-  pageSize: number;
+  current: number;
+  size: number;
 };
 
 export type TPageData<T> = {
   page?: number;
   total?: number;
-  result: T;
+  records: T;
 };

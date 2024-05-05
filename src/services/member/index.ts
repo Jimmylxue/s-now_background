@@ -7,17 +7,21 @@ import {
   useQuery,
 } from '@/core/request/core';
 import { TAddUser, TEditUser, TLetterListParams, TLetterRecordUserParams, TUser } from './type';
-import { post } from '../request';
+import { get, post } from '../request';
 import { TPageData } from '../type';
+import { TLoginUser } from '../login';
 
 export function useMemberList(
   queryKey: QueryKey,
   variable: TLetterListParams,
-  config?: UseQueryOptions<TPageData<TUser[]>, ClientError>,
+  config?: UseQueryOptions<TPageData<TLoginUser[]>, ClientError>,
 ) {
-  return useQuery<TPageData<TUser[]>, ClientError>(
+  return useQuery<TPageData<TLoginUser[]>, ClientError>(
     queryKey,
-    () => post('/user/list', variable),
+    () => {
+      console.log('vvv', variable);
+      return get('/getUsers', variable);
+    },
     config,
   );
 }
@@ -46,7 +50,7 @@ export function useEditUser(
     },
     ClientError,
     TEditUser
-  >((data) => post('/user/edit', data), options);
+  >((data) => post('/updateUser', data), options);
 }
 
 export function useDelUser(
@@ -64,7 +68,7 @@ export function useDelUser(
     {
       id: number;
     }
-  >((data) => post('/user/del', data), options);
+  >((data) => post('/deleteUser', data), options);
 }
 
 export function useSendLetter(

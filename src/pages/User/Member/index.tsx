@@ -8,23 +8,24 @@ import React, { useRef, useState } from 'react';
 import { UserModal } from './components/UserModal';
 import { RecordModal } from './components/RecordModal';
 import { useAddUser, useDelUser, useEditUser, useMemberList } from '@/services/member';
-import { Sex, TUser, sexConst } from '@/services/member/type';
+import { Sex, roleConst, sexConst } from '@/services/member/type';
 import { baseFormatTime } from '@/utils/time';
+import { ERole, TLoginUser } from '@/services/login';
 
 const MemberList: React.FC = () => {
   const formType = useRef<'ADD' | 'EDIT'>('ADD');
-  const chooseUser = useRef<TUser>();
+  const chooseUser = useRef<TLoginUser>();
   const [formOpen, setFormOpen] = useState<boolean>(false);
 
   const [recordUserShow, setRecordUserShow] = useState<boolean>(false);
   const recordUserParams = useRef<TLetterRecordUserParams>();
 
   const [params, setParams] = useState<TLetterListParams>({
-    page: 1,
-    pageSize: 10,
+    current: 1,
+    size: 10,
   });
 
-  const { data, refetch } = useMemberList(['memberList', params], params, {
+  const { data, refetch } = useMemberList(['member', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
@@ -47,15 +48,14 @@ const MemberList: React.FC = () => {
     onSuccess: successCallBack,
   });
 
-  const columns: ProColumns<TUser>[] = [
+  const columns: ProColumns<TLoginUser>[] = [
     {
       title: '用户',
-      dataIndex: 'id',
+      dataIndex: 'username',
       width: 300,
-      render: (_, { avatar, username }) => {
+      render: (_, { username }) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={avatar} alt="" className=" rounded-full size-[50px]" />
             <span className=" ml-2">{username}</span>
           </div>
         );
@@ -72,7 +72,7 @@ const MemberList: React.FC = () => {
     },
     {
       title: '邮箱',
-      dataIndex: 'mail',
+      dataIndex: 'email',
       width: 150,
       renderText: (mail) => mail || '-',
       renderFormItem() {
@@ -81,7 +81,7 @@ const MemberList: React.FC = () => {
     },
     {
       title: '手机号',
-      dataIndex: 'phone',
+      dataIndex: 'mobile',
       width: 150,
       renderText: (phone) => phone || '-',
       renderFormItem() {
@@ -89,20 +89,25 @@ const MemberList: React.FC = () => {
       },
     },
     {
-      title: 'openid',
-      dataIndex: 'openid',
-      width: 300,
-      renderText: (openid) => openid || '-',
-      renderFormItem() {
-        return <Input />;
+      title: '角色',
+      dataIndex: 'role',
+      width: 80,
+      renderText: (_, { role }) => {
+        const _role = role;
+        if (_role === ERole.管理员) {
+          return '管理员';
+        } else if (_role === ERole.法官) {
+          return '法官';
+        } else if (_role === ERole.买家) {
+          return '买家';
+        } else if (_role === ERole.卖家) {
+          return '卖家';
+        } else {
+          return '-';
+        }
       },
-    },
-    {
-      title: '注册时间',
-      dataIndex: 'createTime',
-      search: false,
-      renderText: (val) => {
-        return baseFormatTime(val);
+      renderFormItem() {
+        return <Select options={roleConst} />;
       },
     },
     {
@@ -126,7 +131,7 @@ const MemberList: React.FC = () => {
           okText="Yes"
           cancelText="No"
           onConfirm={async () => {
-            await delUser({ id: record.id });
+            await delUser({ id: record.id! });
           }}
         >
           <Button type="primary">删除</Button>
@@ -137,36 +142,38 @@ const MemberList: React.FC = () => {
   return (
     <>
       <PageContainer>
-        <ProTable<TUser, API.PageParams>
+        <ProTable<TLoginUser, API.PageParams>
           headerTitle={'用户列表'}
           key={'id'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
             total: data?.total,
-            current: params.page,
-            pageSize: params.pageSize,
-            onChange: (pageNum, pageSize) => setParams({ ...params, page: pageNum, pageSize }),
+            current: params.current,
+            pageSize: params.size,
+            onChange: (pageNum, pageSize) =>
+              setParams({ ...params, current: pageNum, size: pageSize }),
           }}
           search={{
             labelWidth: 120,
           }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            setParams({ ...params, page: current, pageSize });
+            console.log('ppp', params);
+            setParams({ ...params, current, size: pageSize });
           }}
-          dataSource={data?.result || []}
+          dataSource={data?.records || []}
           toolBarRender={() => [
-            <Button
-              type="primary"
-              key="primary"
-              onClick={() => {
-                formType.current = 'ADD';
-                chooseUser.current = undefined;
-                setFormOpen(true);
-              }}
-            >
-              <PlusOutlined /> 新建
-            </Button>,
+            // <Button
+            //   type="primary"
+            //   key="primary"
+            //   onClick={() => {
+            //     formType.current = 'ADD';
+            //     chooseUser.current = undefined;
+            //     setFormOpen(true);
+            //   }}
+            // >
+            //   <PlusOutlined /> 新建
+            // </Button>,
           ]}
           columns={columns}
         />

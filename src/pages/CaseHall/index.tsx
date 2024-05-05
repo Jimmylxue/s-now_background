@@ -1,216 +1,138 @@
-import {
-  useAddLetter,
-  useDelLetter,
-  useEditLetter,
-  useLetterList,
-  useSendLetter,
-} from '@/services/letter';
-import {
-  EStatus,
-  TLetterItem,
-  TLetterListParams,
-  TLetterRecordUserParams,
-  platformConst,
-} from '@/services/letter/type';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  ActionType,
-  ProColumns,
-  ModalForm,
-  ProFormText,
-  ProFormTextArea,
-} from '@ant-design/pro-components';
+import { TLetterListParams } from '@/services/letter/type';
+import { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Popconfirm, Select, message } from 'antd';
+import { Button, Select, message } from 'antd';
 import React, { useRef, useState } from 'react';
-import { LetterModal } from './components/LetterModal';
-import { useForm } from 'antd/es/form/Form';
+import { CommitModal } from './components/CommitModal';
 import { RecordModal } from './components/RecordModal';
+import { useAddUser, useDelUser, useEditUser } from '@/services/member';
+import { sexConst } from '@/services/member/type';
+import { useExplain, useOrder } from '@/services/order';
+import { TOrder, orderStatusMap } from '@/services/order/type';
+import { useCaseHall, useJoinJudge } from '@/services/caseHall';
+import { TAppealCaseItem } from '@/services/appealCase';
 
-const TableList: React.FC = () => {
-  const formType = useRef<'ADD' | 'EDIT'>('ADD');
-  const chooseLetter = useRef<TLetterItem>();
+const MemberList: React.FC = () => {
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const [sendShow, setSendShow] = useState<boolean>(false);
-  const [form] = useForm();
 
   const [recordUserShow, setRecordUserShow] = useState<boolean>(false);
-  const recordUserParams = useRef<TLetterRecordUserParams>();
 
+  const currentChooseOrder = useRef<TOrder>();
   const [params, setParams] = useState<TLetterListParams>({
-    page: 1,
-    pageSize: 10,
+    current: 1,
+    size: 10,
   });
 
-  const { data, refetch } = useLetterList(['letterList', params], params, {
+  /**
+   * 查看正在招募法官的案件
+   */
+  const { data, refetch } = useCaseHall(['caseHall', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
 
-  console.log('data~', data);
-
-  const successCallBack = () => {
-    message.success('操作成功');
-    refetch();
-  };
-
-  const { mutateAsync } = useAddLetter({
-    onSuccess: successCallBack,
-  });
-  const { mutateAsync: editLetter } = useEditLetter({
-    onSuccess: successCallBack,
-  });
-
-  const { mutateAsync: delLetter } = useDelLetter({
-    onSuccess: successCallBack,
-  });
-
-  const { mutateAsync: sendLetter } = useSendLetter({
-    onSuccess: successCallBack,
-  });
-
-  const columns: ProColumns<TLetterItem>[] = [
-    {
-      title: '标题',
-      dataIndex: 'title',
-      tip: 'The rule name is the unique key',
+  const { mutateAsync } = useJoinJudge({
+    onSuccess: () => {
+      message.success('加入成功');
+      refetch();
     },
+  });
+
+  const columns: ProColumns<TOrder>[] = [
     {
-      title: '发送目标平台',
-      dataIndex: 'platform',
-      renderText: (platform: number) => (platform === 0 ? 'todoList' : 'snowMemo'),
-      renderFormItem() {
-        return <Select style={{ width: 120 }} options={platformConst} />;
-      },
-    },
-    {
-      title: '已读用户数',
-      dataIndex: 'hasReadCount',
-      render: (val, { letterId }) => {
+      title: '订单id',
+      dataIndex: 'orderId',
+      width: 300,
+      render: (val) => {
         return (
-          <a
-            onClick={() => {
-              recordUserParams.current = {
-                letterId,
-                status: EStatus.已读,
-              };
-              setRecordUserShow(true);
-            }}
-          >
-            {val}
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span className=" ml-2">{val}</span>
+          </div>
         );
       },
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'startTime',
+      width: 200,
+      renderText: (val) => val || '-',
       search: false,
     },
     {
-      title: '未读用户数',
-      dataIndex: 'notReadCount',
-      render: (val, { letterId }) => {
-        return (
-          <a
-            onClick={() => {
-              recordUserParams.current = {
-                letterId,
-                status: EStatus.未读,
-              };
-              setRecordUserShow(true);
-            }}
-          >
-            {val}
-          </a>
-        );
-      },
-      search: false,
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createdTime',
+      title: '申诉时间',
+      dataIndex: 'explainTime',
+      width: 200,
+      renderText: (val) => val || '-',
       search: false,
     },
     {
       title: '操作',
       dataIndex: 'option',
+      width: 200,
       valueType: 'option',
       render: (_, record) => [
-        <a
-          onClick={() => {
-            chooseLetter.current = record;
-            setSendShow(true);
+        <Button
+          type="primary"
+          onClick={async () => {
+            try {
+              await mutateAsync({
+                orderId: record.orderId,
+              });
+            } catch (error) {}
           }}
         >
-          发布
-        </a>,
-        <a
-          onClick={() => {
-            formType.current = 'EDIT';
-            chooseLetter.current = record;
-            setFormOpen(true);
-          }}
-        >
-          编辑
-        </a>,
-        <Popconfirm
-          placement="top"
-          title={'确定删除吗？'}
-          okText="Yes"
-          cancelText="No"
-          onConfirm={async () => {
-            await delLetter({ letterId: record.letterId });
-          }}
-        >
-          <a>删除</a>
-        </Popconfirm>,
+          加入评审团
+        </Button>,
       ],
     },
   ];
   return (
     <>
       <PageContainer>
-        <ProTable<TLetterItem, API.PageParams>
-          headerTitle={'站内信列表'}
-          key={'letterId'}
+        <ProTable<TOrder, API.PageParams>
+          headerTitle={'用户列表'}
+          key={'id'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
             total: data?.total,
-            current: params.page,
-            pageSize: params.pageSize,
-            onChange: (pageNum, pageSize) => setParams({ ...params, page: pageNum, pageSize }),
+            current: params.current,
+            pageSize: params.size,
+            onChange: (pageNum, pageSize) =>
+              setParams({ ...params, current: pageNum, size: pageSize }),
           }}
-          search={{
-            labelWidth: 120,
-          }}
+          search={false}
+          // search={{
+          //   labelWidth: 120,
+          // }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            setParams({ ...params, page: current, pageSize });
+            console.log('ppp', params);
+            setParams({ ...params, current, size: pageSize });
           }}
-          dataSource={data?.result || []}
+          dataSource={data?.records || []}
           toolBarRender={() => [
-            <Button
-              type="primary"
-              key="primary"
-              onClick={() => {
-                formType.current = 'ADD';
-                chooseLetter.current = undefined;
-                setFormOpen(true);
-              }}
-            >
-              <PlusOutlined /> 新建
-            </Button>,
+            // <Button
+            //   type="primary"
+            //   key="primary"
+            //   onClick={() => {
+            //     formType.current = 'ADD';
+            //     chooseUser.current = undefined;
+            //     setFormOpen(true);
+            //   }}
+            // >
+            //   <PlusOutlined /> 新建
+            // </Button>,
           ]}
           columns={columns}
         />
-        <LetterModal
-          type="ADD"
-          letter={chooseLetter.current}
+        <CommitModal
           onOk={async (values) => {
-            if (formType.current === 'ADD') {
-              await mutateAsync(values);
-            } else {
-              await editLetter({ ...values, letterId: chooseLetter.current?.letterId });
-            }
-
+            await explain({
+              ...values,
+              id: currentChooseOrder.current?.id,
+              orderId: currentChooseOrder.current?.orderId,
+            });
             setFormOpen(false);
           }}
           onCancel={() => {
@@ -218,40 +140,7 @@ const TableList: React.FC = () => {
           }}
           open={formOpen}
         />
-        <ModalForm
-          form={form}
-          title={'新建规则'}
-          width="400px"
-          open={sendShow}
-          onOpenChange={(status) => {
-            form.resetFields();
-            if (status === false) {
-              setSendShow(false);
-            }
-          }}
-          onFinish={async (value) => {
-            const userIds = value.userIds.split('|').map(Number);
-            await sendLetter({
-              letterId: chooseLetter.current?.letterId!,
-              userIds,
-            });
-            setSendShow(false);
-          }}
-        >
-          <ProFormTextArea
-            rules={[
-              {
-                required: true,
-                message: '用户id为必填项',
-              },
-            ]}
-            width="md"
-            name="userIds"
-            placeholder="请输入用户id，并使用|隔开"
-          />
-        </ModalForm>
         <RecordModal
-          params={recordUserParams.current}
           open={recordUserShow}
           onOk={() => {
             setRecordUserShow(false);
@@ -264,4 +153,4 @@ const TableList: React.FC = () => {
     </>
   );
 };
-export default TableList;
+export default MemberList;

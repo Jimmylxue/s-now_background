@@ -1,31 +1,60 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Button, Card, Radio, Space, message, theme } from 'antd';
-import React, { useState } from 'react';
-import { Link } from '@umijs/max';
+import React, { useEffect, useState } from 'react';
+import { TQuestionItem, useJudgeExam, useSubmitScore } from '@/services/exam';
+import { ExamStatus, getUserByUsername } from '@/services/login';
+import { flushSync } from 'react-dom';
 
 const ExamPage: React.FC = () => {
   const { token } = theme.useToken();
-  const { initialState } = useModel('@@initialState');
-  const [questionList, setQuestionList] = useState([
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const currentUser = initialState?.currentUser;
+  const { data, refetch } = useJudgeExam(
+    ['judgeExam'],
+    {},
     {
-      title: '当有顾客比较暴躁时我们应该怎么办？',
-      A: 'A：应该让他再继续生气',
-      B: 'B：理性的告诉他应该怎么',
-      answer: '',
+      refetchOnWindowFocus: false,
+      enabled: currentUser?.judgeExamination === ExamStatus.未通过考试,
     },
-    {
-      title: '当有顾客提出想要全额退款时，应该怎么办？',
-      A: 'A：合理观察结果',
-      B: 'B：不知道不知道',
-      answer: '',
-    },
-  ]);
+  );
+  const [questionList, setQuestionList] = useState<TQuestionItem[]>([]);
 
-  const confirmAnswer = () => {
+  const { mutateAsync } = useSubmitScore({
+    onSuccess(res) {},
+  });
+
+  useEffect(() => {
+    setQuestionList(data || ([] as any));
+  }, [data]);
+
+  const confirmAnswer = async () => {
     const hasWithoutAnswer = questionList.find((qut) => !qut.answer);
     if (hasWithoutAnswer) {
       message.info('请完整提交答卷');
+    }
+    let score = 0;
+    questionList.forEach((item) => {
+      if (item.chooseAnswer === item.answer) {
+        score += 10;
+      }
+    });
+    await mutateAsync({
+      score,
+    });
+    if (score >= 80) {
+      message.success('考试通过');
+      const user = (await getUserByUsername(currentUser?.username)) as any;
+      localStorage.setItem('login-user', JSON.stringify(user));
+      flushSync(() => {
+        setInitialState((s) => ({
+          ...s,
+          currentUser: user,
+        }));
+      });
+    } else {
+      message.info('考试未通过，请重新答题');
+      refetch();
     }
   };
   return (
@@ -56,7 +85,7 @@ const ExamPage: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            欢迎使用 进入考试
+            欢迎使用
           </div>
           <p
             style={{
@@ -71,34 +100,41 @@ const ExamPage: React.FC = () => {
             考试通过后，方可成为一名正式法官，加入评审员，对案件做出自己的判决
           </p>
 
-          {questionList.map((qut, index) => (
-            <div className=" mb-2" key={index}>
-              <p>{qut.title}</p>
-              <div>
-                <Radio.Group
-                  value={qut.answer}
-                  onChange={(val) => {
-                    console.log('val', val.target.value);
-                    const value = val.target.value;
-                    const newQuestion = [...questionList];
-                    newQuestion[index].answer = value;
-                    setQuestionList(newQuestion);
-                  }}
-                >
-                  <Space direction="vertical">
-                    <Radio value={'A'}>{qut.A}</Radio>
-                    <Radio value={'B'}>{qut.B}</Radio>
-                  </Space>
-                </Radio.Group>
-              </div>
-            </div>
-          ))}
+          {currentUser?.judgeExamination === ExamStatus.未通过考试 ? (
+            <>
+              {questionList?.map((qut, index) => (
+                <div className=" mb-2" key={index}>
+                  <p>{qut.questionText}</p>
+                  <div>
+                    <Radio.Group
+                      value={qut.chooseAnswer}
+                      onChange={(val) => {
+                        console.log('val', val.target.value);
+                        const value = val.target.value;
+                        const newQuestion = [...questionList];
+                        newQuestion[index].chooseAnswer = value;
+                        console.log('new', newQuestion);
+                        setQuestionList(newQuestion);
+                      }}
+                    >
+                      <Space direction="vertical">
+                        <Radio value={'A'}>{qut.optionA}</Radio>
+                        <Radio value={'B'}>{qut.optionB}</Radio>
+                      </Space>
+                    </Radio.Group>
+                  </div>
+                </div>
+              ))}
 
-          <div className=" mt-4 flex justify-center">
-            <Button type="primary" onClick={confirmAnswer}>
-              提交答案
-            </Button>
-          </div>
+              <div className=" mt-4 flex justify-center">
+                <Button type="primary" onClick={confirmAnswer}>
+                  提交答案
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div>您已通过考试</div>
+          )}
         </div>
       </Card>
     </PageContainer>

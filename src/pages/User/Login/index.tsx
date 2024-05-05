@@ -1,19 +1,6 @@
 import { Footer } from '@/components';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
-import {
-  AlipayCircleOutlined,
-  LockOutlined,
-  MobileOutlined,
-  TaobaoCircleOutlined,
-  UserOutlined,
-  WeiboCircleOutlined,
-} from '@ant-design/icons';
-import {
-  LoginForm,
-  ProFormCaptcha,
-  ProFormCheckbox,
-  ProFormText,
-} from '@ant-design/pro-components';
+import { LockOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormText, ProFormSelect } from '@ant-design/pro-components';
 import { history, useModel, Helmet } from '@umijs/max';
 import { Alert, message, Tabs } from 'antd';
 import Settings from '../../../../config/defaultSettings';
@@ -21,7 +8,7 @@ import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createStyles } from 'antd-style';
 import { encrypt } from '@/utils';
-import { login } from '@/services/login';
+import { ERole, getUserByUsername, login, register, useRegister } from '@/services/login';
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -57,67 +44,54 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-const ActionIcons = () => {
-  const { styles } = useStyles();
-  return (
-    <>
-      <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.action} />
-      <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.action} />
-      <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.action} />
-    </>
-  );
-};
 
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({ content }) => {
-  return (
-    <Alert
-      style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
-  );
-};
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
-  const [type, setType] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const [type, setType] = useState<string>('login');
+  const { setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
+  const handleSubmit = async (values: any) => {
+    if (type === 'login') {
+      // 登录
+      const token = (await login({
+        ...values,
+      })) as any;
+      console.log('token', token);
+      localStorage.setItem('token', token);
+      const user = (await getUserByUsername(values.username)) as any;
+      console.log('user', user);
+      localStorage.setItem('login-user', JSON.stringify(user));
+
+      message.success('登录成功');
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
-          currentUser: userInfo,
+          currentUser: user,
         }));
       });
+      const urlParams = new URL(window.location.href).searchParams;
+      history.push(urlParams.get('redirect') || '/');
+      return;
+    } else {
+      // 注册
+      console.log('values', values);
+      const { username, password, confirmPassword, role } = values;
+      if (password !== confirmPassword) {
+        message.error('两次密码输入不一致');
+        return;
+      }
+
+      const res = await register({
+        username,
+        password,
+        role,
+      });
+
+      console.log('res', res);
+
+      message.success('注册成功');
+      setType('login');
     }
   };
-  const handleSubmit = async (values: any) => {
-    // 登录
-    values.password = await encrypt(values.password);
-    const res = (await login({
-      ...values,
-    })) as any;
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('login-user', JSON.stringify(res.user));
-    message.success('登录成功');
-    flushSync(() => {
-      setInitialState((s) => ({
-        ...s,
-        currentUser: res.user,
-      }));
-    });
-    const urlParams = new URL(window.location.href).searchParams;
-    history.push(urlParams.get('redirect') || '/');
-    return;
-  };
-  const { status, type: loginType } = userLoginState;
   return (
     <div className={styles.container}>
       <Helmet>
@@ -132,6 +106,11 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          submitter={{
+            searchConfig: {
+              submitText: type === 'login' ? '登录' : '注册',
+            },
+          }}
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
@@ -142,7 +121,6 @@ const Login: React.FC = () => {
           initialValues={{
             autoLogin: true,
           }}
-          actions={['其他登录方式 :', <ActionIcons key="icons" />]}
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);
           }}
@@ -153,23 +131,20 @@ const Login: React.FC = () => {
             centered
             items={[
               {
-                key: 'account',
-                label: '账户密码登录',
+                key: 'login',
+                label: '登录',
               },
               {
-                key: 'mobile',
-                label: '手机号登录',
+                key: 'register',
+                label: '注册',
               },
             ]}
           />
 
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage content={'错误的用户名和密码(admin/ant.design)'} />
-          )}
-          {type === 'account' && (
+          {type === 'login' && (
             <>
               <ProFormText
-                name="phone"
+                name="username"
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined />,
@@ -182,6 +157,7 @@ const Login: React.FC = () => {
                   },
                 ]}
               />
+
               <ProFormText.Password
                 name="password"
                 fieldProps={{
@@ -199,77 +175,68 @@ const Login: React.FC = () => {
             </>
           )}
 
-          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
-          {type === 'mobile' && (
+          {type === 'register' && (
             <>
               <ProFormText
                 fieldProps={{
                   size: 'large',
                   prefix: <MobileOutlined />,
                 }}
-                name="mobile"
-                placeholder={'请输入手机号！'}
+                name="username"
+                placeholder={'请输入用户名！'}
                 rules={[
                   {
                     required: true,
-                    message: '手机号是必填项！',
-                  },
-                  {
-                    pattern: /^1\d{10}$/,
-                    message: '不合法的手机号！',
+                    message: '用户名是必填项',
                   },
                 ]}
               />
-              <ProFormCaptcha
+              <ProFormSelect
+                name="role"
+                options={[
+                  { value: 1, label: '管理员' },
+                  { value: 2, label: '法官' },
+                  { value: 3, label: '买家' },
+                  { value: 4, label: '卖家' },
+                ]}
+                placeholder={'请选择角色'}
+                rules={[
+                  {
+                    required: true,
+                    message: '必须选择一个角色',
+                  },
+                ]}
+              />
+              <ProFormText.Password
+                name="password"
                 fieldProps={{
                   size: 'large',
                   prefix: <LockOutlined />,
                 }}
-                captchaProps={{
-                  size: 'large',
-                }}
-                placeholder={'请输入验证码！'}
-                captchaTextRender={(timing, count) => {
-                  if (timing) {
-                    return `${count} ${'秒后重新获取'}`;
-                  }
-                  return '获取验证码';
-                }}
-                name="captcha"
+                placeholder={'请输入密码'}
                 rules={[
                   {
                     required: true,
-                    message: '验证码是必填项！',
+                    message: '密码是必填项！',
                   },
                 ]}
-                onGetCaptcha={async (phone) => {
-                  const result = await getFakeCaptcha({
-                    phone,
-                  });
-                  if (!result) {
-                    return;
-                  }
-                  message.success('获取验证码成功！验证码为：1234');
+              />
+              <ProFormText.Password
+                name="confirmPassword"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <LockOutlined />,
                 }}
+                placeholder={'请再次确认密码'}
+                rules={[
+                  {
+                    required: true,
+                    message: '密码是必填项！',
+                  },
+                ]}
               />
             </>
           )}
-          <div
-            style={{
-              marginBottom: 24,
-            }}
-          >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              忘记密码 ?
-            </a>
-          </div>
         </LoginForm>
       </div>
       <Footer />

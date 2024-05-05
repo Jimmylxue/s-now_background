@@ -4,9 +4,12 @@ import { Spin, message } from 'antd';
 import { createStyles } from 'antd-style';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
+import { UserSettingModal } from './UserSetting';
+import { useEditUser } from '@/services/member';
+import { updateUser } from '@/services/login';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -38,6 +41,7 @@ const useStyles = createStyles(({ token }) => {
 });
 
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
+  const [modalShow, setModalShow] = useState<boolean>(false);
   /**
    * 退出登录，并且将当前的 url 保存
    */
@@ -62,6 +66,11 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const { initialState, setInitialState } = useModel('@@initialState');
 
+  // @ts-ignore
+  const user = initialState?.currentUser;
+
+  console.log('user~~', user);
+
   const onMenuClick = useCallback(
     (event: MenuInfo) => {
       const { key } = event;
@@ -73,7 +82,8 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
         return;
       }
       if (key === 'settings') {
-        message.info('设置个人信息');
+        setModalShow(true);
+        // message.info('设置个人信息');
       }
     },
     [setInitialState],
@@ -118,14 +128,38 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   ];
 
   return (
-    <HeaderDropdown
-      menu={{
-        selectedKeys: [],
-        onClick: onMenuClick,
-        items: menuItems,
-      }}
-    >
-      {children}
-    </HeaderDropdown>
+    <>
+      <HeaderDropdown
+        menu={{
+          selectedKeys: [],
+          onClick: onMenuClick,
+          items: menuItems,
+        }}
+      >
+        {children}
+      </HeaderDropdown>
+      <UserSettingModal
+        user={user}
+        open={modalShow}
+        onCancel={() => {
+          setModalShow(false);
+        }}
+        onOk={async (values) => {
+          console.log('values', values);
+          const res = await updateUser({ ...user, ...values });
+          console.log('resaaaaa', res);
+          const newUser = { ...user, ...values };
+          localStorage.setItem('login-user', JSON.stringify(newUser));
+          flushSync(() => {
+            setInitialState((s) => ({
+              ...s,
+              currentUser: newUser,
+            }));
+          });
+          message.success('更改成功');
+          setModalShow(false);
+        }}
+      />
+    </>
   );
 };
