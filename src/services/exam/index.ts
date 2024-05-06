@@ -1,6 +1,7 @@
 import { ClientError } from '@/core/request/core';
 import { QueryKey, UseMutationOptions, UseQueryOptions, useMutation, useQuery } from 'react-query';
-import { post } from '../request';
+import { get, post } from '../request';
+import { TPageData } from '../type';
 
 type TUploadCase = {};
 
@@ -42,6 +43,32 @@ type TSubmitScore = {
 export function useSubmitScore(options?: UseMutationOptions<boolean, ClientError, TSubmitScore>) {
   return useMutation<boolean, ClientError, TSubmitScore>(
     (data) => post(`/question/submit?score=${data.score}`, data),
+    options,
+  );
+}
+
+/**
+ * 管理员获取题目列表
+ */
+export function useExamQuestionList(
+  queryKey: QueryKey,
+  variable?: any,
+  config?: UseQueryOptions<TPageData<TQuestionItem[]>, ClientError>,
+) {
+  return useQuery<TPageData<TQuestionItem[]>, ClientError>(
+    queryKey,
+    () => {
+      return get('/question/questionPage', variable);
+    },
+    config,
+  );
+}
+
+export function useDelQuestionItem(
+  options?: UseMutationOptions<boolean, ClientError, { id: number }>,
+) {
+  return useMutation<boolean, ClientError, { id: number }>(
+    (data) => get(`/question/delete`, data),
     options,
   );
 }

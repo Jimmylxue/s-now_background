@@ -11,9 +11,5 @@ export default function access(initialState: { currentUser?: TLoginUser } | unde
     isAdmin: role === ERole.管理员,
     isJudge: role === ERole.法官,
     isUser,
-    /**
-     * 是否拥有 我的案件 入口
-     */
-    hasMyCase: [ERole.买家, ERole.卖家, ERole.法官].includes(role!),
   };
 }

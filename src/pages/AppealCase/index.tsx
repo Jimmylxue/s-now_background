@@ -9,7 +9,7 @@ import { RecordModal } from './components/RecordModal';
 import { useAddUser, useDelUser, useEditUser } from '@/services/member';
 import { sexConst } from '@/services/member/type';
 import { useExplain, useGetJudge, useOrder } from '@/services/order';
-import { TOrder, orderStatusMap } from '@/services/order/type';
+import { EOrderStatus, TOrder, orderStatusMap } from '@/services/order/type';
 import { TAppealCaseItem, useAppealCaseList } from '@/services/appealCase';
 
 const MemberList: React.FC = () => {
@@ -103,7 +103,7 @@ const MemberList: React.FC = () => {
       render: (_, record) => [
         <Button
           type="primary"
-          // disabled={orderStatus === EOrderStatus.已申诉}
+          disabled={record.orderStatus !== EOrderStatus.已申诉}
           onClick={async () => {
             try {
               await getJudge({ orderId: record.orderId });
@@ -111,17 +111,6 @@ const MemberList: React.FC = () => {
           }}
         >
           招募法官
-        </Button>,
-        <Button
-          type="primary"
-          // disabled={orderStatus === EOrderStatus.已申诉}
-          onClick={async () => {
-            try {
-              await getJudge({ orderId: record.orderId });
-            } catch (error) {}
-          }}
-        >
-          开庭
         </Button>,
         <Button
           type="primary"

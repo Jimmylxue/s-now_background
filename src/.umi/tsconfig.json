@@ -27,7 +27,7 @@
         "src/.umi/*"
       ],
       "@umijs/max": [
-        "/Users/mac/Desktop/code/background/snow-background/node_modules/.pnpm/umi@4.1.10_@babel+core@7.4.5_@types+node@20.12.7_@types+react@18.3.1_eslint@8.35.0_jest@29.7._l7d6gbpm2z65pushq5nlf767zy/node_modules/umi"
+        "/Users/jimmy/Desktop/code/jimmy/snow_background/node_modules/.pnpm/umi@4.1.10_@babel+core@7.4.5_@types+node@20.12.7_@types+react@18.3.1_eslint@8.35.0_jest@29.7._l7d6gbpm2z65pushq5nlf767zy/node_modules/umi"
       ],
       "@umijs/max/typings": [
         "src/.umi/typings"

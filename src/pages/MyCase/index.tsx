@@ -1,60 +1,44 @@
-import { TLetterListParams, TLetterRecordUserParams } from '@/services/letter/type';
+import { TLetterListParams } from '@/services/letter/type';
 import { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Input, Popconfirm, Select, message } from 'antd';
+import { Button, Select, message } from 'antd';
 import React, { useRef, useState } from 'react';
-import { CommitModal } from './components/CommitModal';
 import { RecordModal } from './components/RecordModal';
-import { useAddUser, useDelUser, useEditUser, useMemberList } from '@/services/member';
-import { Sex, TUser, roleConst, sexConst } from '@/services/member/type';
-import { baseFormatTime } from '@/utils/time';
-import { ERole } from '@/services/login';
-import { useExplain, useOrder, useDownloadFile } from '@/services/order';
+import { sexConst } from '@/services/member/type';
 import { EOrderStatus, TOrder } from '@/services/order/type';
+import { TMyCaseItem, useCatExplain, useJudgeCat, useJudged } from '@/services/myCase';
+import { SupportModal } from './components/Support';
 
 const MemberList: React.FC = () => {
-  const formType = useRef<'ADD' | 'EDIT'>('ADD');
   const [formOpen, setFormOpen] = useState<boolean>(false);
 
-  const [recordUserShow, setRecordUserShow] = useState<boolean>(false);
+  const [recordShow, setRecordShow] = useState<boolean>(false);
+  const [supportShow, setSupportShow] = useState<boolean>(false);
 
-  const currentChooseOrder = useRef<TOrder>();
+  const currentChooseOrder = useRef<TMyCaseItem>();
   const [params, setParams] = useState<TLetterListParams>({
     current: 1,
     size: 10,
   });
 
-  const { data, refetch } = useOrder(['order', params], params, {
+  const { data, refetch } = useJudgeCat(['order', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
 
-  console.log('data~', data);
+  const { mutateAsync: judged } = useJudged({
+    onSuccess() {
+      successCallBack();
+    },
+  });
 
   const successCallBack = () => {
     message.success('操作成功');
     refetch();
   };
 
-  const { mutateAsync: explain } = useExplain({
-    onSuccess: successCallBack,
-  });
-
-  const { mutateAsync: downloadFile } = useDownloadFile();
-
-  const { mutateAsync } = useAddUser({
-    onSuccess: successCallBack,
-  });
-  const { mutateAsync: editUser } = useEditUser({
-    onSuccess: successCallBack,
-  });
-
-  const { mutateAsync: delUser } = useDelUser({
-    onSuccess: successCallBack,
-  });
-
-  const columns: ProColumns<TOrder>[] = [
+  const columns: ProColumns<TMyCaseItem>[] = [
     {
       title: '订单id',
       dataIndex: 'orderId',
@@ -67,20 +51,21 @@ const MemberList: React.FC = () => {
         );
       },
     },
+
     {
-      title: '申诉状态',
-      dataIndex: 'orderStatus',
-      width: 80,
-      renderText: (_, { orderStatus }) =>
-        orderStatus === EOrderStatus.未申诉
-          ? '未申诉'
-          : orderStatus === EOrderStatus.已申诉
-          ? '已申诉'
-          : '-',
-      renderFormItem() {
-        return <Select options={sexConst} />;
-      },
+      title: '用户1',
+      dataIndex: 'user1',
+      width: 300,
+      search: false,
     },
+
+    {
+      title: '用户2',
+      dataIndex: 'user2',
+      width: 300,
+      search: false,
+    },
+
     {
       title: '开始时间',
       dataIndex: 'startTime',
@@ -88,13 +73,7 @@ const MemberList: React.FC = () => {
       renderText: (val) => val || '-',
       search: false,
     },
-    {
-      title: '申诉时间',
-      dataIndex: 'explainTime',
-      width: 200,
-      renderText: (val) => val || '-',
-      search: false,
-    },
+
     {
       title: '操作',
       dataIndex: 'option',
@@ -104,14 +83,20 @@ const MemberList: React.FC = () => {
         <Button
           type="primary"
           onClick={async () => {
-            const res = await downloadFile({
-              // path: record.path,D:\upload\20240504_1935070.xlsx
-              path: 'D:\\upload\\20240504_1935070.xlsx',
-            });
-            console.log('download', res);
+            currentChooseOrder.current = record;
+            setRecordShow(true);
           }}
         >
-          下载资料
+          案件详情
+        </Button>,
+        <Button
+          type="primary"
+          onClick={async () => {
+            currentChooseOrder.current = record;
+            setSupportShow(true);
+          }}
+        >
+          投票
         </Button>,
         // <Button
         //   type="primary"
@@ -139,8 +124,8 @@ const MemberList: React.FC = () => {
   return (
     <>
       <PageContainer>
-        <ProTable<TOrder, API.PageParams>
-          headerTitle={'用户列表'}
+        <ProTable<TMyCaseItem, API.PageParams>
+          headerTitle={'我的案件'}
           key={'id'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
@@ -159,42 +144,35 @@ const MemberList: React.FC = () => {
             setParams({ ...params, current, size: pageSize });
           }}
           dataSource={data?.records || []}
-          toolBarRender={() => [
-            // <Button
-            //   type="primary"
-            //   key="primary"
-            //   onClick={() => {
-            //     formType.current = 'ADD';
-            //     chooseUser.current = undefined;
-            //     setFormOpen(true);
-            //   }}
-            // >
-            //   <PlusOutlined /> 新建
-            // </Button>,
-          ]}
+          toolBarRender={() => []}
           columns={columns}
         />
-        <CommitModal
-          onOk={async (values) => {
-            await explain({
-              ...values,
-              id: currentChooseOrder.current?.id,
-              orderId: currentChooseOrder.current?.orderId,
-            });
-            setFormOpen(false);
-          }}
-          onCancel={() => {
-            setFormOpen(false);
-          }}
-          open={formOpen}
-        />
         <RecordModal
-          open={recordUserShow}
+          orderId={currentChooseOrder.current?.orderId!}
+          open={recordShow}
           onOk={() => {
-            setRecordUserShow(false);
+            setRecordShow(false);
           }}
           onCancel={() => {
-            setRecordUserShow(false);
+            setRecordShow(false);
+          }}
+        />
+        <SupportModal
+          chooseOrder={currentChooseOrder.current!}
+          open={supportShow}
+          onOk={async (val) => {
+            if (!val) {
+              setSupportShow(false);
+              return;
+            }
+            await judged({
+              orderId: currentChooseOrder.current?.orderId!,
+              upUserId: val,
+            });
+            setSupportShow(false);
+          }}
+          onCancel={() => {
+            setSupportShow(false);
           }}
         />
       </PageContainer>

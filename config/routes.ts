@@ -39,7 +39,7 @@ export default [
     name: '我的案件',
     icon: 'smile',
     component: './MyCase',
-    access: 'hasMyCase',
+    access: 'isJudge',
   },
 
   /**

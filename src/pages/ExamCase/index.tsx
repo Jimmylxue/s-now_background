@@ -13,17 +13,20 @@ import '@umijs/max';
 import { Button, Popconfirm, Select, Upload, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { UploadProps } from 'antd/lib';
-import { useJudgeExam } from '@/services/exam';
+import {
+  TQuestionItem,
+  useDelQuestionItem,
+  useExamQuestionList,
+  useJudgeExam,
+} from '@/services/exam';
 
 const TableList: React.FC = () => {
-  const recordUserParams = useRef<TLetterRecordUserParams>();
-
   const [params, setParams] = useState<TLetterListParams>({
-    page: 1,
-    pageSize: 10,
+    current: 1,
+    size: 10,
   });
 
-  const { data, refetch } = useLetterList(['letterList', params], params, {
+  const { data, refetch } = useExamQuestionList(['questionList'], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
@@ -35,7 +38,7 @@ const TableList: React.FC = () => {
     refetch();
   };
 
-  const { mutateAsync: delLetter } = useDelLetter({
+  const { mutateAsync: delQuestion } = useDelQuestionItem({
     onSuccess: successCallBack,
   });
 
@@ -66,61 +69,27 @@ const TableList: React.FC = () => {
     },
   };
 
-  const columns: ProColumns<TLetterItem>[] = [
+  const columns: ProColumns<TQuestionItem>[] = [
     {
-      title: '标题',
-      dataIndex: 'title',
+      title: '题目',
+      dataIndex: 'questionText',
+      width: 400,
     },
     {
-      title: '发送目标平台',
-      dataIndex: 'platform',
-      renderText: (platform: number) => (platform === 0 ? 'todoList' : 'snowMemo'),
-      renderFormItem() {
-        return <Select style={{ width: 120 }} options={platformConst} />;
-      },
+      title: '选项A',
+      dataIndex: 'optionA',
     },
     {
-      title: '已读用户数',
-      dataIndex: 'hasReadCount',
-      render: (val, { letterId }) => {
-        return (
-          <a
-            onClick={() => {
-              recordUserParams.current = {
-                letterId,
-                status: EStatus.已读,
-              };
-            }}
-          >
-            {val}
-          </a>
-        );
-      },
-      search: false,
+      title: '选项B',
+      dataIndex: 'optionB',
     },
     {
-      title: '未读用户数',
-      dataIndex: 'notReadCount',
-      render: (val, { letterId }) => {
-        return (
-          <a
-            onClick={() => {
-              recordUserParams.current = {
-                letterId,
-                status: EStatus.未读,
-              };
-            }}
-          >
-            {val}
-          </a>
-        );
-      },
-      search: false,
+      title: '类型',
+      dataIndex: 'type',
     },
     {
-      title: '创建时间',
-      dataIndex: 'createdTime',
-      search: false,
+      title: '正确答案',
+      dataIndex: 'answer',
     },
     {
       title: '操作',
@@ -133,7 +102,7 @@ const TableList: React.FC = () => {
           okText="确定"
           cancelText="取消"
           onConfirm={async () => {
-            await delLetter({ letterId: record.letterId });
+            await delQuestion({ id: record.id });
           }}
         >
           <Button type="primary">删除</Button>
@@ -144,27 +113,28 @@ const TableList: React.FC = () => {
   return (
     <>
       <PageContainer>
-        <ProTable<TLetterItem, API.PageParams>
+        <ProTable<TQuestionItem, API.PageParams>
           headerTitle={'题库列表'}
           key={'letterId'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
             total: data?.total,
-            current: params.page,
-            pageSize: params.pageSize,
-            onChange: (pageNum, pageSize) => setParams({ ...params, page: pageNum, pageSize }),
+            current: params.current,
+            pageSize: params.size,
+            onChange: (pageNum, pageSize) =>
+              setParams({ ...params, current: pageNum, size: pageSize }),
           }}
-          search={{
-            labelWidth: 120,
+          search={false}
+          // search={{
+          //   labelWidth: 120,
+          // }}
+          // @ts-ignore
+          request={({ current, pageSize, ...params }: any) => {
+            console.log('ppp', params);
+            setParams({ ...params, current, size: pageSize });
           }}
           // @ts-ignore
-          request={refetch}
-          dataSource={data?.result || []}
-          toolBarRender={() => [
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />}>上传题库</Button>
-            </Upload>,
-          ]}
+          dataSource={data?.records || []}
           columns={columns}
         />
       </PageContainer>

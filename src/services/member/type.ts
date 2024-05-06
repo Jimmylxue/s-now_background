@@ -67,6 +67,7 @@ export type TLetterListParams = TPageListType & {
   title?: string;
   platform?: EPlatform;
   letterId?: number;
+  orderId?: string;
 };
 
 export type TAddLetterParams = Omit<

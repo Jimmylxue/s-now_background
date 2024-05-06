@@ -25,6 +25,8 @@ const MemberList: React.FC = () => {
     size: 10,
   });
 
+  const messageType = useRef<0 | 1>(0);
+
   const { data, refetch } = useOrder(['order', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
@@ -70,9 +72,7 @@ const MemberList: React.FC = () => {
       dataIndex: 'orderStatus',
       width: 80,
       renderText: (_, { orderStatus }) => orderStatusMap[orderStatus],
-      renderFormItem() {
-        return <Select options={sexConst} />;
-      },
+      search: false,
     },
     {
       title: '开始时间',
@@ -96,13 +96,25 @@ const MemberList: React.FC = () => {
       render: (_, record) => [
         <Button
           type="primary"
-          // disabled={orderStatus === EOrderStatus.已申诉}
+          disabled={record.orderStatus !== EOrderStatus.未申诉}
           onClick={() => {
+            messageType.current = 0;
             currentChooseOrder.current = record;
             setFormOpen(true);
           }}
         >
           申诉
+        </Button>,
+        <Button
+          type="primary"
+          disabled={record.orderStatus !== EOrderStatus.已开庭}
+          onClick={() => {
+            messageType.current = 1;
+            currentChooseOrder.current = record;
+            setFormOpen(true);
+          }}
+        >
+          补充材料
         </Button>,
         // <Button
         //   type="primary"
@@ -171,6 +183,7 @@ const MemberList: React.FC = () => {
               ...values,
               id: currentChooseOrder.current?.id,
               orderId: currentChooseOrder.current?.orderId,
+              messageType: messageType.current,
             });
             setFormOpen(false);
           }}
