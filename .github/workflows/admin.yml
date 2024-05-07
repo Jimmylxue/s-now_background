@@ -3,8 +3,8 @@ name: 打包admin web 应用并上传服务器
 on:
   push:
     # push 代码的时候 哪个分支会受到影响 这里是 master 主分支
-    # branches:
-    #   - admin-prod
+    branches:
+      - admin-prod
     workflow_dispatch:
 
 # 推送之后执行一系列的任务
