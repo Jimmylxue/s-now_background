@@ -1,0 +1,53 @@
+name: 打包admin web 应用并上传服务器
+
+on:
+  push:
+    # push 代码的时候 哪个分支会受到影响 这里是 master 主分支
+    # branches:
+    #   - admin-prod
+    workflow_dispatch:
+
+# 推送之后执行一系列的任务
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 获取代码
+      - name: 迁出代码
+        # 使用action库 action/checkout获取大妈
+        uses: actions/checkout@master
+      # 安装Node10
+
+      - name: 安装node.js
+        # 使用action库  actions/setup-node安装node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.14.0
+
+      - name: 安装pnpm
+        run: npm install -g pnpm@7.12.2
+
+      # 安装依赖
+      - name: 安装依赖
+        run: pnpm install
+
+      # 打包
+      - name: 打包
+        run: pnpm background:build
+
+      # 上传到腾讯云
+      - name: 发布到腾讯云
+        uses: easingthemes/ssh-deploy@v2.1.1
+        env:
+          # 私钥
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          # SCP参数
+          ARGS: '-avzr --delete'
+          # 源目录
+          SOURCE: '/dist'
+          # 服务器ip
+          REMOTE_HOST: ${{ secrets.PRIVATE_HOST }}
+          # 用户
+          REMOTE_USER: 'root'
+          # 目标地址 - 服务器上nginx对应访问的地址
+          TARGET: '/www/server/nginx/html/admin'
