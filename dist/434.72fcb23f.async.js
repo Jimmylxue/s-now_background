@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_snow_program_background=self.webpackChunk_snow_program_background||[]).push([[434],{4434:function(E,n,t){t.r(n),t.d(n,{default:function(){return r}});var a=t(75271),u=t(45247),o=t(52676);function r(){var s=(0,u.useOutletContext)();return(0,o.jsx)(u.Outlet,{context:s})}}}]);
