@@ -10,7 +10,9 @@ import { get, post } from '../request';
 import { TPageData } from '../type';
 import { TLetterListParams } from '../member/type';
 
-type TCaseHallItem = {};
+export type TCaseHallItem = {
+  orderId: string;
+};
 
 /**
  * 查看正在招募法官的案件

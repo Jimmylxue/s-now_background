@@ -2,16 +2,12 @@ import { TLetterListParams } from '@/services/letter/type';
 import { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Select, message } from 'antd';
+import { Button, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { CommitModal } from './components/CommitModal';
 import { RecordModal } from './components/RecordModal';
-import { useAddUser, useDelUser, useEditUser } from '@/services/member';
-import { sexConst } from '@/services/member/type';
-import { useExplain, useOrder } from '@/services/order';
-import { TOrder, orderStatusMap } from '@/services/order/type';
-import { useCaseHall, useJoinJudge } from '@/services/caseHall';
-import { TAppealCaseItem } from '@/services/appealCase';
+import { TOrder } from '@/services/order/type';
+import { TCaseHallItem, useCaseHall, useJoinJudge } from '@/services/caseHall';
 
 const MemberList: React.FC = () => {
   const [formOpen, setFormOpen] = useState<boolean>(false);
@@ -39,7 +35,7 @@ const MemberList: React.FC = () => {
     },
   });
 
-  const columns: ProColumns<TOrder>[] = [
+  const columns: ProColumns<TCaseHallItem>[] = [
     {
       title: '订单id',
       dataIndex: 'orderId',
@@ -90,7 +86,7 @@ const MemberList: React.FC = () => {
   return (
     <>
       <PageContainer>
-        <ProTable<TOrder, API.PageParams>
+        <ProTable<TCaseHallItem, API.PageParams>
           headerTitle={'用户列表'}
           key={'id'}
           pagination={{
@@ -102,52 +98,12 @@ const MemberList: React.FC = () => {
               setParams({ ...params, current: pageNum, size: pageSize }),
           }}
           search={false}
-          // search={{
-          //   labelWidth: 120,
-          // }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            console.log('ppp', params);
             setParams({ ...params, current, size: pageSize });
           }}
           dataSource={data?.records || []}
-          toolBarRender={() => [
-            // <Button
-            //   type="primary"
-            //   key="primary"
-            //   onClick={() => {
-            //     formType.current = 'ADD';
-            //     chooseUser.current = undefined;
-            //     setFormOpen(true);
-            //   }}
-            // >
-            //   <PlusOutlined /> 新建
-            // </Button>,
-          ]}
           columns={columns}
-        />
-        <CommitModal
-          onOk={async (values) => {
-            await explain({
-              ...values,
-              id: currentChooseOrder.current?.id,
-              orderId: currentChooseOrder.current?.orderId,
-            });
-            setFormOpen(false);
-          }}
-          onCancel={() => {
-            setFormOpen(false);
-          }}
-          open={formOpen}
-        />
-        <RecordModal
-          open={recordUserShow}
-          onOk={() => {
-            setRecordUserShow(false);
-          }}
-          onCancel={() => {
-            setRecordUserShow(false);
-          }}
         />
       </PageContainer>
     </>

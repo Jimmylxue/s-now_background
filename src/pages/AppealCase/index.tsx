@@ -6,7 +6,6 @@ import { Button, Select, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { CommitModal } from './components/CommitModal';
 import { RecordModal } from './components/RecordModal';
-import { useAddUser, useDelUser, useEditUser } from '@/services/member';
 import { sexConst } from '@/services/member/type';
 import { useExplain, useGetJudge, useOrder } from '@/services/order';
 import { EOrderStatus, TOrder, orderStatusMap } from '@/services/order/type';
@@ -114,7 +113,6 @@ const MemberList: React.FC = () => {
         </Button>,
         <Button
           type="primary"
-          // disabled={orderStatus === EOrderStatus.已申诉}
           onClick={async () => {
             try {
               await getJudge({ orderId: record.orderId });
@@ -123,33 +121,13 @@ const MemberList: React.FC = () => {
         >
           下载资料
         </Button>,
-        // <Button
-        //   type="primary"
-        //   onClick={() => {
-        //     formType.current = 'EDIT';
-        //     setFormOpen(true);
-        //   }}
-        // >
-        //   编辑
-        // </Button>,
-        // <Popconfirm
-        //   placement="top"
-        //   title={'确定删除吗？'}
-        //   okText="Yes"
-        //   cancelText="No"
-        //   onConfirm={async () => {
-        //     await delUser({ id: record.id });
-        //   }}
-        // >
-        //   <Button type="primary">删除</Button>
-        // </Popconfirm>,
       ],
     },
   ];
   return (
     <>
       <PageContainer>
-        <ProTable<TOrder, API.PageParams>
+        <ProTable<TAppealCaseItem, API.PageParams>
           headerTitle={'申诉案件列表'}
           key={'id'}
           pagination={{
@@ -160,29 +138,12 @@ const MemberList: React.FC = () => {
             onChange: (pageNum, pageSize) =>
               setParams({ ...params, current: pageNum, size: pageSize }),
           }}
-          // search={false}
-          // search={{
-          //   labelWidth: 120,
-          // }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            console.log('ppp', params);
             setParams({ ...params, current, size: pageSize });
+            refetch();
           }}
           dataSource={data?.records || []}
-          toolBarRender={() => [
-            // <Button
-            //   type="primary"
-            //   key="primary"
-            //   onClick={() => {
-            //     formType.current = 'ADD';
-            //     chooseUser.current = undefined;
-            //     setFormOpen(true);
-            //   }}
-            // >
-            //   <PlusOutlined /> 新建
-            // </Button>,
-          ]}
           columns={columns}
         />
         <CommitModal

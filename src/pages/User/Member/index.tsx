@@ -158,8 +158,8 @@ const MemberList: React.FC = () => {
           }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            console.log('ppp', params);
             setParams({ ...params, current, size: pageSize });
+            refetch();
           }}
           dataSource={data?.records || []}
           toolBarRender={() => [

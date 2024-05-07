@@ -2,17 +2,13 @@ import { TLetterListParams } from '@/services/letter/type';
 import { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Select, message } from 'antd';
+import { Button, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { RecordModal } from './components/RecordModal';
-import { sexConst } from '@/services/member/type';
-import { EOrderStatus, TOrder } from '@/services/order/type';
-import { TMyCaseItem, useCatExplain, useJudgeCat, useJudged } from '@/services/myCase';
+import { TMyCaseItem, useJudgeCat, useJudged } from '@/services/myCase';
 import { SupportModal } from './components/Support';
 
 const MemberList: React.FC = () => {
-  const [formOpen, setFormOpen] = useState<boolean>(false);
-
   const [recordShow, setRecordShow] = useState<boolean>(false);
   const [supportShow, setSupportShow] = useState<boolean>(false);
 
@@ -68,8 +64,8 @@ const MemberList: React.FC = () => {
 
     {
       title: '开始时间',
-      dataIndex: 'startTime',
-      width: 200,
+      dataIndex: 'joinTime',
+      width: 350,
       renderText: (val) => val || '-',
       search: false,
     },
@@ -91,6 +87,7 @@ const MemberList: React.FC = () => {
         </Button>,
         <Button
           type="primary"
+          disabled={!!record.judged}
           onClick={async () => {
             currentChooseOrder.current = record;
             setSupportShow(true);
@@ -98,26 +95,6 @@ const MemberList: React.FC = () => {
         >
           投票
         </Button>,
-        // <Button
-        //   type="primary"
-        //   onClick={() => {
-        //     formType.current = 'EDIT';
-        //     setFormOpen(true);
-        //   }}
-        // >
-        //   编辑
-        // </Button>,
-        // <Popconfirm
-        //   placement="top"
-        //   title={'确定删除吗？'}
-        //   okText="Yes"
-        //   cancelText="No"
-        //   onConfirm={async () => {
-        //     await delUser({ id: record.id });
-        //   }}
-        // >
-        //   <Button type="primary">删除</Button>
-        // </Popconfirm>,
       ],
     },
   ];
@@ -140,8 +117,8 @@ const MemberList: React.FC = () => {
           }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            console.log('ppp', params);
             setParams({ ...params, current, size: pageSize });
+            refetch();
           }}
           dataSource={data?.records || []}
           toolBarRender={() => []}

@@ -106,28 +106,11 @@ const MemberList: React.FC = () => {
               setParams({ ...params, current: pageNum, size: pageSize }),
           }}
           search={false}
-          // search={{
-          //   labelWidth: 120,
-          // }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            console.log('ppp', params);
             setParams({ ...params, current, size: pageSize });
           }}
           dataSource={data?.data?.records || []}
-          toolBarRender={() => [
-            // <Button
-            //   type="primary"
-            //   key="primary"
-            //   onClick={() => {
-            //     formType.current = 'ADD';
-            //     chooseUser.current = undefined;
-            //     setFormOpen(true);
-            //   }}
-            // >
-            //   <PlusOutlined /> 新建
-            // </Button>,
-          ]}
           columns={columns}
         />
         <RecordModal

@@ -2,13 +2,12 @@ import { Footer } from '@/components';
 import { LockOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText, ProFormSelect } from '@ant-design/pro-components';
 import { history, useModel, Helmet } from '@umijs/max';
-import { Alert, message, Tabs } from 'antd';
+import { Form, message, Tabs } from 'antd';
 import Settings from '../../../../config/defaultSettings';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createStyles } from 'antd-style';
-import { encrypt } from '@/utils';
-import { ERole, getUserByUsername, login, register, useRegister } from '@/services/login';
+import { getUserByUsername, login, register } from '@/services/login';
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -49,6 +48,7 @@ const Login: React.FC = () => {
   const [type, setType] = useState<string>('login');
   const { setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
+  const [form] = Form.useForm();
   const handleSubmit = async (values: any) => {
     if (type === 'login') {
       // 登录
@@ -106,6 +106,7 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          form={form}
           submitter={{
             searchConfig: {
               submitText: type === 'login' ? '登录' : '注册',
@@ -116,8 +117,8 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
-          subTitle={'Ant Design 是西湖区最具影响力的 Web 设计规范'}
+          title="法庭管理系统"
+          subTitle={'环境使用淘宝小法庭管理系统'}
           initialValues={{
             autoLogin: true,
           }}
@@ -127,7 +128,10 @@ const Login: React.FC = () => {
         >
           <Tabs
             activeKey={type}
-            onChange={setType}
+            onChange={(key) => {
+              form.resetFields();
+              setType(key);
+            }}
             centered
             items={[
               {
@@ -149,7 +153,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <UserOutlined />,
                 }}
-                placeholder={'用户名: admin or user'}
+                placeholder={'用户名'}
                 rules={[
                   {
                     required: true,
@@ -164,7 +168,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <LockOutlined />,
                 }}
-                placeholder={'密码: ant.design'}
+                placeholder={'密码'}
                 rules={[
                   {
                     required: true,

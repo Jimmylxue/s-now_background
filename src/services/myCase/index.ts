@@ -17,6 +17,7 @@ export type TMyCaseItem = {
   user1: string;
   userId2: number;
   user2: string;
+  judged: boolean;
 };
 
 /**
