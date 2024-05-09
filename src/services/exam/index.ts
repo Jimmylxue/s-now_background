@@ -72,3 +72,12 @@ export function useDelQuestionItem(
     options,
   );
 }
+
+export function useAddQuestionItem(
+  options?: UseMutationOptions<boolean, ClientError, TQuestionItem>,
+) {
+  return useMutation<boolean, ClientError, TQuestionItem>(
+    (data) => get(`/question/add`, data),
+    options,
+  );
+}

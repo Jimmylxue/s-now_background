@@ -19,6 +19,7 @@ const ExamPage: React.FC = () => {
     },
   );
   const [questionList, setQuestionList] = useState<TQuestionItem[]>([]);
+  const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
   const { mutateAsync } = useSubmitScore({
     onSuccess(res) {},
@@ -54,7 +55,7 @@ const ExamPage: React.FC = () => {
       });
     } else {
       message.info('考试未通过，请重新答题');
-      refetch();
+      setShowAnswer(true);
     }
   };
   return (
@@ -75,8 +76,8 @@ const ExamPage: React.FC = () => {
             backgroundPosition: '100% -30%',
             backgroundRepeat: 'no-repeat',
             backgroundSize: '274px auto',
-            backgroundImage:
-              "url('https://gw.alipayobjects.com/mdn/rms_a9745b/afts/img/A*BuFmQqsB2iAAAAAAAAAAAAAAARQnAQ')",
+            // backgroundImage:
+            //   "url('https://gw.alipayobjects.com/mdn/rms_a9745b/afts/img/A*BuFmQqsB2iAAAAAAAAAAAAAAARQnAQ')",
           }}
         >
           <div
@@ -105,6 +106,7 @@ const ExamPage: React.FC = () => {
               {questionList?.map((qut, index) => (
                 <div className=" mb-2" key={index}>
                   <p>{qut.questionText}</p>
+                  {showAnswer && <p className=" my-2 text-red-400">正确答案：{qut.answer}</p>}
                   <div>
                     <Radio.Group
                       value={qut.chooseAnswer}
@@ -127,9 +129,22 @@ const ExamPage: React.FC = () => {
               ))}
 
               <div className=" mt-4 flex justify-center">
-                <Button type="primary" onClick={confirmAnswer}>
-                  提交答案
-                </Button>
+                {showAnswer ? (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      refetch();
+                      setShowAnswer(false);
+                    }}
+                    className="ml-2"
+                  >
+                    重新考试
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={confirmAnswer}>
+                    提交答案
+                  </Button>
+                )}
               </div>
             </>
           ) : (

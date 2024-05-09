@@ -71,3 +71,10 @@ export function useAddComment(
     options,
   );
 }
+
+export function useDelComment(options?: UseMutationOptions<boolean, ClientError, { id: number }>) {
+  return useMutation<boolean, ClientError, { id: number }>(
+    (data) => get('/comment/deleted', data),
+    options,
+  );
+}

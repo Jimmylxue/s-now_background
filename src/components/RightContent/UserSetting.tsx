@@ -50,6 +50,9 @@ export function UserSettingModal({ open, onOk, onCancel, user }: TProps) {
             ]}
           />
         </Form.Item>
+        <Form.Item name="userScore" label="信誉积分">
+          <Input readOnly disabled />
+        </Form.Item>
         <Form.Item name="password" label="密码" rules={[{ required: true }]}>
           <Input />
         </Form.Item>

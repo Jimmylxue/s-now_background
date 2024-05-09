@@ -15,10 +15,12 @@ import React, { useRef, useState } from 'react';
 import { UploadProps } from 'antd/lib';
 import {
   TQuestionItem,
+  useAddQuestionItem,
   useDelQuestionItem,
   useExamQuestionList,
   useJudgeExam,
 } from '@/services/exam';
+import { AddModal } from './components/LetterModal';
 
 const TableList: React.FC = () => {
   const [params, setParams] = useState<TLetterListParams>({
@@ -26,7 +28,9 @@ const TableList: React.FC = () => {
     size: 10,
   });
 
-  const { data, refetch } = useExamQuestionList(['questionList'], params, {
+  const [addShow, setAddShow] = useState<boolean>(false);
+
+  const { data, refetch } = useExamQuestionList(['questionList', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
@@ -39,6 +43,10 @@ const TableList: React.FC = () => {
   };
 
   const { mutateAsync: delQuestion } = useDelQuestionItem({
+    onSuccess: successCallBack,
+  });
+
+  const { mutateAsync: addQuestion } = useAddQuestionItem({
     onSuccess: successCallBack,
   });
 
@@ -121,8 +129,9 @@ const TableList: React.FC = () => {
             total: data?.total,
             current: params.current,
             pageSize: params.size,
-            onChange: (pageNum, pageSize) =>
-              setParams({ ...params, current: pageNum, size: pageSize }),
+            onChange: (pageNum, pageSize) => {
+              setParams({ ...params, current: pageNum, size: pageSize });
+            },
           }}
           search={false}
           // search={{
@@ -135,9 +144,30 @@ const TableList: React.FC = () => {
           }}
           // @ts-ignore
           dataSource={data?.records || []}
+          toolBarRender={() => [
+            <Button
+              type="primary"
+              key="primary"
+              onClick={() => {
+                setAddShow(true);
+              }}
+            >
+              添加题目
+            </Button>,
+          ]}
           columns={columns}
         />
       </PageContainer>
+      <AddModal
+        open={addShow}
+        onOk={async (values) => {
+          await addQuestion(values);
+          setAddShow(false);
+        }}
+        onCancel={() => {
+          setAddShow(false);
+        }}
+      />
     </>
   );
 };

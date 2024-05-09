@@ -30,12 +30,7 @@ export function CommitModal({ open, onOk, onCancel }: TProps) {
         <Form.Item name="userText" label="文案" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Upload"
-          name="filePath"
-          getValueFromEvent={normFile}
-          rules={[{ required: true }]}
-        >
+        <Form.Item label="Upload" name="filePath" getValueFromEvent={normFile}>
           <Upload
             action="http://175.178.248.238:8080/api/upload"
             headers={{
