@@ -131,7 +131,7 @@ const MemberList: React.FC = () => {
           okText="Yes"
           cancelText="No"
           onConfirm={async () => {
-            await delUser({ id: record.id! });
+            await delUser({ userId: record.id! });
           }}
         >
           <Button type="primary">删除</Button>

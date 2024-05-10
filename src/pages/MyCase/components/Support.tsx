@@ -23,7 +23,7 @@ export function SupportModal({ chooseOrder, open, onOk, onCancel }: TProps) {
         value={choose}
       >
         <Radio value={chooseOrder?.userId1 || '1'}>{chooseOrder?.user1 || '用户1'}</Radio>
-        <Radio value={chooseOrder?.userId1 || '2'}>{chooseOrder?.user2 || '用户2'}</Radio>
+        <Radio value={chooseOrder?.userId2 || '2'}>{chooseOrder?.user2 || '用户2'}</Radio>
       </Radio.Group>
     </Modal>
   );

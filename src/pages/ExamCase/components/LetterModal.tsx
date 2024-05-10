@@ -30,7 +30,7 @@ export function AddModal({ open, onOk, onCancel }: TProps) {
             style={{ width: 120 }}
             options={[
               { value: '选择', label: '选择' },
-              { value: '填空', label: '填空' },
+              { value: '判断', label: '判断' },
             ]}
           />
         </Form.Item>

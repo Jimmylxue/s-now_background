@@ -102,7 +102,7 @@ const MemberList: React.FC = () => {
     <>
       <PageContainer>
         <ProTable<TOrder, API.PageParams>
-          headerTitle={'用户列表'}
+          headerTitle={'订单列表'}
           key={'id'}
           pagination={{
             showTotal: (total: number) => `共有${total}条记录`,
@@ -112,9 +112,7 @@ const MemberList: React.FC = () => {
             onChange: (pageNum, pageSize) =>
               setParams({ ...params, current: pageNum, size: pageSize }),
           }}
-          search={{
-            labelWidth: 120,
-          }}
+          search={false}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
             setParams({ ...params, current, size: pageSize });

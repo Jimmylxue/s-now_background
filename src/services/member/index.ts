@@ -58,7 +58,7 @@ export function useDelUser(
     boolean,
     ClientError,
     {
-      id: number;
+      userId: number;
     }
   >,
 ) {
@@ -66,9 +66,9 @@ export function useDelUser(
     boolean,
     ClientError,
     {
-      id: number;
+      userId: number;
     }
-  >((data) => post('/deleteUser', data), options);
+  >((data) => get('/deleteUser', data), options);
 }
 
 export function useSendLetter(
