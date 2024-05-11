@@ -1,5 +1,8 @@
+import { useDownloadFile } from '@/services/order';
 import { TPubHallItem } from '@/services/pubHall';
-import { Button, Modal, Table, TableProps } from 'antd';
+import { downloadWithBlob } from '@/utils';
+import { request } from '@umijs/max';
+import { Button, Modal, Table, TableProps, message } from 'antd';
 
 type TProps = {
   recordData?: TPubHallItem['orderExplainMessages'];
@@ -9,6 +12,8 @@ type TProps = {
 };
 
 export function RecordModal({ recordData, open, onOk, onCancel }: TProps) {
+  const { mutateAsync } = useDownloadFile();
+
   const columns: TableProps<TPubHallItem['orderExplainMessages']['0']>['columns'] = [
     {
       title: '用户id',
@@ -30,9 +35,26 @@ export function RecordModal({ recordData, open, onOk, onCancel }: TProps) {
           type="primary"
           onClick={async () => {
             try {
-              // await mutateAsync({
-              //   orderId: record.orderId,
-              // });
+              const path = record.filePath.split('opt/')?.[1];
+              if (!path) {
+                message.info('没有文件或文件异常');
+                return;
+              }
+              let base = 'http://175.178.248.238:8080/api';
+              let qut = `download/${path || '20240508_21121692.png'}`;
+              let url = `${base}/${qut}`;
+              let res = await request(url, {
+                method: 'POST',
+                headers: {
+                  Authorization: localStorage.getItem('token') || '',
+                },
+                getResponse: true,
+              });
+              let blob = new Blob([res.data]);
+              let ext = qut.split('.')?.[1];
+              let name_temp = qut.split('.')?.[0].split('/');
+              let name = name_temp[name_temp.length - 1];
+              await downloadWithBlob(blob, `${name}.${ext}`);
             } catch (error) {}
           }}
         >

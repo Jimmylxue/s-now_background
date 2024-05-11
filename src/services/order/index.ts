@@ -31,8 +31,13 @@ export function useExplain(options?: UseMutationOptions<boolean, ClientError, TA
   );
 }
 
-export function useDownloadFile(options?: UseMutationOptions<boolean, ClientError, TAddUser>) {
-  return useMutation<boolean, ClientError, TAddUser>((data) => post('/download', data), options);
+export function useDownloadFile(
+  options?: UseMutationOptions<boolean, ClientError, { path: string }>,
+) {
+  return useMutation<boolean, ClientError, { path: string }>(
+    (data) => post(`/download/20240508_21121692.png`, {}),
+    options,
+  );
 }
 
 export function useEditUser(
