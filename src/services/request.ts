@@ -3,8 +3,8 @@ import { message } from 'antd';
 
 export const request = createRequest(
   {
-    baseURL: 'https://api.jimmyxuexue.top',
-    // baseURL: 'http://127.0.0.1:9999',
+    // baseURL: 'https://api.jimmyxuexue.top',
+    baseURL: 'http://127.0.0.1:9999',
     timeout: 20000,
   },
   {

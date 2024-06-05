@@ -31,6 +31,25 @@ export default [
     ],
   },
   {
+    path: '/shop',
+    name: '商城管理',
+    icon: 'crown',
+    // access: 'canAdmin',
+    routes: [
+      { path: '/shop', redirect: '/shop/productType' },
+      {
+        path: '/shop/productType',
+        name: '商品类型',
+        component: './Shop/ProductType',
+      },
+      {
+        path: '/shop/product',
+        name: '商品',
+        component: './Shop/Product',
+      },
+    ],
+  },
+  {
     path: '/member',
     name: '会员管理',
     icon: 'crown',

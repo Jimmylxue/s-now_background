@@ -3,14 +3,14 @@
 // DO NOT CHANGE IT MANUALLY!
 import React, { useEffect, useState } from 'react';
 import { ApplyPluginsType } from 'umi';
-import { renderClient, RenderClientOpts } from '/Users/mac/Desktop/code/background/snow-background/node_modules/.pnpm/@umijs+renderer-react@4.1.10_react-dom@18.1.0_react@18.1.0__react@18.1.0/node_modules/@umijs/renderer-react';
+import { renderClient, RenderClientOpts } from '/Users/jimmy/Desktop/code/jimmy/snow_background/node_modules/.pnpm/@umijs+renderer-react@4.1.10_react-dom@18.1.0_react@18.1.0__react@18.1.0/node_modules/@umijs/renderer-react';
 import { createHistory } from './core/history';
 import { createPluginManager } from './core/plugin';
 import { getRoutes } from './core/route';
 import type { Location } from 'history';
 
-import '/Users/mac/Desktop/code/background/snow-background/src/global.css';
-import '/Users/mac/Desktop/code/background/snow-background/src/global.tsx';
+import '/Users/jimmy/Desktop/code/jimmy/snow_background/src/global.css';
+import '/Users/jimmy/Desktop/code/jimmy/snow_background/src/global.tsx';
 import 'antd/dist/reset.css';
 const publicPath = '/';
 const runtimePublicPath = false;
