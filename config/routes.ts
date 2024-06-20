@@ -6,17 +6,6 @@ export default [
   },
   { path: '/welcome', name: '欢迎', icon: 'smile', component: './Welcome' },
   {
-    path: '/admin',
-    name: '管理页',
-    icon: 'crown',
-    // 权限通过 src/access.ts 模块进行判断
-    access: 'canAdmin',
-    routes: [
-      { path: '/admin', redirect: '/admin/sub-page' },
-      { path: '/admin/sub-page', name: '二级管理页', component: './Admin' },
-    ],
-  },
-  {
     path: '/manage',
     name: '系统管理',
     icon: 'crown',
