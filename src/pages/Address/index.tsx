@@ -67,40 +67,12 @@ const MemberList: React.FC = () => {
     },
     {
       title: '添加时间',
-      dataIndex: 'createTime',
+      dataIndex: 'createdTime',
       search: false,
       renderText: (val) => {
-        return baseFormatTime(val);
+        return val || '-';
       },
     },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'option',
-    //   valueType: 'option',
-    //   render: (_, record) => [
-    //     <Button
-    //       type="primary"
-    //       onClick={() => {
-    //         formType.current = 'EDIT';
-    //         chooseUser.current = record;
-    //         setFormOpen(true);
-    //       }}
-    //     >
-    //       编辑
-    //     </Button>,
-    //     <Popconfirm
-    //       placement="top"
-    //       title={'确定删除吗？'}
-    //       okText="Yes"
-    //       cancelText="No"
-    //       onConfirm={async () => {
-    //         await delUser({ id: record.id });
-    //       }}
-    //     >
-    //       <Button type="primary">删除</Button>
-    //     </Popconfirm>,
-    //   ],
-    // },
   ];
   return (
     <>
