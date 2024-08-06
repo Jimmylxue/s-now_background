@@ -3,5 +3,4 @@
 // DO NOT CHANGE IT MANUALLY!
 import SmileOutlined from '/Users/jimmy/Desktop/code/jimmy/snow_background/node_modules/.pnpm/@ant-design+icons@4.8.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@ant-design/icons/es/icons/SmileOutlined';
 import CrownOutlined from '/Users/jimmy/Desktop/code/jimmy/snow_background/node_modules/.pnpm/@ant-design+icons@4.8.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@ant-design/icons/es/icons/CrownOutlined';
-import TableOutlined from '/Users/jimmy/Desktop/code/jimmy/snow_background/node_modules/.pnpm/@ant-design+icons@4.8.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@ant-design/icons/es/icons/TableOutlined';
-export default { SmileOutlined, CrownOutlined, TableOutlined };
+export default { SmileOutlined, CrownOutlined };

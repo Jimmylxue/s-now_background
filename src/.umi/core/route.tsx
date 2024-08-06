@@ -4,24 +4,14 @@
 import React from 'react';
 
 export async function getRoutes() {
-  const routes = {"1":{"path":"/user","layout":false,"id":"1"},"2":{"name":"登录","path":"/user/login","parentId":"1","id":"2"},"3":{"path":"/welcome","name":"欢迎","icon":"smile","parentId":"ant-design-pro-layout","id":"3"},"4":{"path":"/manage","name":"系统管理","icon":"crown","parentId":"ant-design-pro-layout","id":"4"},"5":{"path":"/manage","redirect":"/admin/letter","parentId":"4","id":"5"},"6":{"path":"/manage/letter","name":"站内信","parentId":"4","id":"6"},"7":{"path":"/shop","name":"商城管理","icon":"crown","parentId":"ant-design-pro-layout","id":"7"},"8":{"path":"/shop","redirect":"/shop/productType","parentId":"7","id":"8"},"9":{"path":"/shop/productType","name":"商品类型","parentId":"7","id":"9"},"10":{"path":"/shop/product","name":"商品","parentId":"7","id":"10"},"11":{"path":"/member","name":"会员管理","icon":"crown","parentId":"ant-design-pro-layout","id":"11"},"12":{"name":"查询表格","icon":"table","path":"/list","parentId":"ant-design-pro-layout","id":"12"},"13":{"path":"/","redirect":"/welcome","parentId":"ant-design-pro-layout","id":"13"},"14":{"path":"*","layout":false,"id":"14"},"ant-design-pro-layout":{"id":"ant-design-pro-layout","path":"/","isLayout":true},"umi/plugin/openapi":{"path":"/umi/plugin/openapi","id":"umi/plugin/openapi"}} as const;
+  const routes = {"1":{"path":"/welcome","name":"欢迎","icon":"smile","parentId":"ant-design-pro-layout","id":"1"},"2":{"path":"/member","name":"会员管理","icon":"crown","parentId":"ant-design-pro-layout","id":"2"},"3":{"path":"/","redirect":"/welcome","parentId":"ant-design-pro-layout","id":"3"},"4":{"path":"*","layout":false,"id":"4"},"ant-design-pro-layout":{"id":"ant-design-pro-layout","path":"/","isLayout":true},"umi/plugin/openapi":{"path":"/umi/plugin/openapi","id":"umi/plugin/openapi"}} as const;
   return {
     routes,
     routeComponents: {
-'1': React.lazy(() => import('./EmptyRoute')),
-'2': React.lazy(() => import(/* webpackChunkName: "p__User__Login__index" */'@/pages/User/Login/index.tsx')),
-'3': React.lazy(() => import(/* webpackChunkName: "p__Welcome" */'@/pages/Welcome.tsx')),
-'4': React.lazy(() => import('./EmptyRoute')),
-'5': React.lazy(() => import('./EmptyRoute')),
-'6': React.lazy(() => import(/* webpackChunkName: "p__Manage__Letter__index" */'@/pages/Manage/Letter/index.tsx')),
-'7': React.lazy(() => import('./EmptyRoute')),
-'8': React.lazy(() => import('./EmptyRoute')),
-'9': React.lazy(() => import(/* webpackChunkName: "p__Shop__ProductType__index" */'@/pages/Shop/ProductType/index.tsx')),
-'10': React.lazy(() => import(/* webpackChunkName: "p__Shop__Product__index" */'@/pages/Shop/Product/index.tsx')),
-'11': React.lazy(() => import(/* webpackChunkName: "p__User__Member__index" */'@/pages/User/Member/index.tsx')),
-'12': React.lazy(() => import(/* webpackChunkName: "p__TableList__index" */'@/pages/TableList/index.tsx')),
-'13': React.lazy(() => import('./EmptyRoute')),
-'14': React.lazy(() => import(/* webpackChunkName: "p__404" */'@/pages/404.tsx')),
+'1': React.lazy(() => import(/* webpackChunkName: "p__Welcome" */'@/pages/Welcome.tsx')),
+'2': React.lazy(() => import(/* webpackChunkName: "p__User__Member__index" */'@/pages/User/Member/index.tsx')),
+'3': React.lazy(() => import('./EmptyRoute')),
+'4': React.lazy(() => import(/* webpackChunkName: "p__404" */'@/pages/404.tsx')),
 'ant-design-pro-layout': React.lazy(() => import(/* webpackChunkName: "umi__plugin-layout__Layout" */'/Users/jimmy/Desktop/code/jimmy/snow_background/src/.umi/plugin-layout/Layout.tsx')),
 'umi/plugin/openapi': React.lazy(() => import(/* webpackChunkName: "umi__plugin-openapi__openapi" */'/Users/jimmy/Desktop/code/jimmy/snow_background/src/.umi/plugin-openapi/openapi.tsx')),
 },
