@@ -18,8 +18,6 @@ const MemberList: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log('data~', data);
-
   const columns: ProColumns<TAddressItem>[] = [
     {
       title: '用户名',
@@ -36,6 +34,10 @@ const MemberList: React.FC = () => {
       title: '手机号',
       dataIndex: 'phone',
       renderText: (_, { phone }) => phone,
+    },
+    {
+      title: '会员码',
+      dataIndex: 'memberCode',
     },
     {
       title: '所属省',
@@ -92,7 +94,13 @@ const MemberList: React.FC = () => {
           }}
           // @ts-ignore
           request={({ current, pageSize, ...params }: any) => {
-            setParams({ ...params, page: current, pageSize });
+            setParams({
+              ...params,
+              page: current,
+              pageSize,
+              username: params.username || undefined,
+              phone: params.phone || undefined,
+            });
             refetch();
           }}
           dataSource={data?.result || []}

@@ -1,4 +1,11 @@
-import { ClientError, QueryKey, UseQueryOptions, useQuery } from '@/core/request/core';
+import {
+  ClientError,
+  QueryKey,
+  UseMutationOptions,
+  UseQueryOptions,
+  useMutation,
+  useQuery,
+} from '@/core/request/core';
 import { post } from '@/services/request';
 import { TPageData, TPageListType } from '@/services/type';
 
@@ -18,6 +25,7 @@ export type TAddressItem = {
   phone: string;
   createdTime: Date;
   updateTime: Date;
+  memberCode: string;
 };
 
 export function useAddressList(
@@ -30,4 +38,48 @@ export function useAddressList(
     () => post('/address/list', variable),
     config,
   );
+}
+
+export type TConfigItem = {
+  configId: number;
+  inviteCode: string;
+  lineCode: string;
+};
+
+export function useSystemConfig(
+  queryKey: QueryKey,
+  variable: any,
+  config?: UseQueryOptions<TPageData<TConfigItem[]>, ClientError>,
+) {
+  return useQuery<TPageData<TConfigItem[]>, ClientError>(
+    queryKey,
+    () => post('/address/configList', variable),
+    config,
+  );
+}
+
+export function useEditConfig(
+  options?: UseMutationOptions<
+    {
+      code: number;
+      result: string;
+    },
+    ClientError,
+    {
+      inviteCode: string;
+      lineCode: string;
+    }
+  >,
+) {
+  return useMutation<
+    {
+      code: number;
+      result: string;
+    },
+    ClientError,
+    {
+      inviteCode: string;
+      lineCode: string;
+    }
+  >((data) => post('/address/editConfig', data), options);
 }

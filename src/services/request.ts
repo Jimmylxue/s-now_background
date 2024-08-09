@@ -24,7 +24,6 @@ export const request = createRequest(
     },
     response: {
       onSuccess: (res) => {
-        console.log('success', res);
         if (res.data.code === 200) {
           return res.data.result;
         }

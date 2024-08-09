@@ -12,6 +12,12 @@ export default [
     icon: 'crown',
     component: './Address/index',
   },
+  {
+    path: '/config',
+    name: '系统设置',
+    icon: 'SettingOutlined',
+    component: './Address/config',
+  },
   { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];
