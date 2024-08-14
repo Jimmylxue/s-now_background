@@ -2,10 +2,15 @@ import { TLetterListParams } from '@/services/letter/type';
 import { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Input } from 'antd';
+import { Input, Select } from 'antd';
 import React, { useState } from 'react';
-import { baseFormatTime } from '@/utils/time';
+import { baseFormatTime, convertLondonToBeijing } from '@/utils/time';
 import { TAddressItem, useAddressList } from '@/services/address';
+
+const productTypeMap = {
+  1: '充电宝',
+  2: 'iphone',
+};
 
 const MemberList: React.FC = () => {
   const [params, setParams] = useState<TLetterListParams>({
@@ -38,6 +43,7 @@ const MemberList: React.FC = () => {
     {
       title: '会员码',
       dataIndex: 'memberCode',
+      search: true,
     },
     {
       title: '所属省',
@@ -60,7 +66,7 @@ const MemberList: React.FC = () => {
     {
       title: '详细地址',
       dataIndex: 'detail',
-      width: 300,
+      width: 250,
       renderText: (detail) => detail || '-',
       renderFormItem() {
         return <Input />;
@@ -68,11 +74,34 @@ const MemberList: React.FC = () => {
       search: false,
     },
     {
+      title: '超商门市',
+      dataIndex: 'shop',
+      renderText: (shop) => shop || '-',
+      search: false,
+    },
+    {
+      title: '绑定商品',
+      dataIndex: 'productType',
+      // @ts-ignore
+      renderText: (productType) => productTypeMap[productType] || '-',
+      renderFormItem() {
+        return (
+          <Select
+            allowClear
+            options={[
+              { label: '充电宝', value: 1 },
+              { label: 'iphone', value: 2 },
+            ]}
+          />
+        );
+      },
+    },
+    {
       title: '添加时间',
       dataIndex: 'createdTime',
       search: false,
       renderText: (val) => {
-        return val || '-';
+        return convertLondonToBeijing(val) || '-';
       },
     },
   ];
@@ -100,6 +129,7 @@ const MemberList: React.FC = () => {
               pageSize,
               username: params.username || undefined,
               phone: params.phone || undefined,
+              memberCode: params.memberCode || undefined,
             });
             refetch();
           }}
