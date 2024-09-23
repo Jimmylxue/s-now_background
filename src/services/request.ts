@@ -4,7 +4,14 @@ import { message } from 'antd';
 export const request = createRequest(
   {
     // baseURL: 'https://api.jimmyxuexue.top',
-    baseURL: 'http://156.251.227.88:9999',
+    // baseURL: 'http://156.251.227.88:9999',
+    // baseURL: 'https://apis.jiujiu3c.shop',
+    // baseURL: 'http://103.248.229.58:9999', // en 马来站
+    // baseURL: 'https://api.nunuapp.shop', // luck 站
+    // baseURL: 'https://apis.nunuapp.shop', // shop 站
+    // baseURL: 'https://api.shop3c.app', // shop 站
+    // baseURL: 'https://apis.shop3c.app', // shop 站
+    baseURL: 'http://127.0.0.1:9999', // shop 站
     timeout: 20000,
   },
   {

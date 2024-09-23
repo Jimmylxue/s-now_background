@@ -97,6 +97,14 @@ const MemberList: React.FC = () => {
       },
     },
     {
+      title: 'sku',
+      dataIndex: 'sku',
+      renderText: (val) => {
+        return Object.values(JSON.parse(val || '{}')).join('-');
+      },
+      search: false,
+    },
+    {
       title: '添加时间',
       dataIndex: 'createdTime',
       search: false,
