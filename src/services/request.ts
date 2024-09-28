@@ -11,7 +11,8 @@ export const request = createRequest(
     // baseURL: 'https://apis.nunuapp.shop', // shop 站
     // baseURL: 'https://api.shop3c.app', // shop 站
     // baseURL: 'https://apis.shop3c.app', // shop 站
-    baseURL: 'http://127.0.0.1:9999', // shop 站
+    baseURL: 'https://api.appbites.shop', // shop 站
+    // baseURL: 'http://127.0.0.1:9999', // shop 站
     timeout: 20000,
   },
   {
