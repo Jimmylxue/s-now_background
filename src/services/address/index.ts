@@ -83,3 +83,16 @@ export function useEditConfig(
     }
   >((data) => post('/address/editConfig', data), options);
 }
+
+export function useGenerateLink(options?: UseMutationOptions<string, ClientError, any>) {
+  return useMutation<string, ClientError, any>((data) => post('/address/generate', data), options);
+}
+
+export function useDownloadFile(
+  options?: UseMutationOptions<string, ClientError, TAddressListParams>,
+) {
+  return useMutation<string, ClientError, TAddressListParams>(
+    (data) => post('/address/export', data),
+    options,
+  );
+}

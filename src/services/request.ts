@@ -1,6 +1,8 @@
 import { createRequest } from '@/core/request/core';
 import { message } from 'antd';
 
+export const baseURL = 'https://api.mypandabuy.shop';
+
 export const request = createRequest(
   {
     // baseURL: 'https://api.jimmyxuexue.top',
@@ -11,8 +13,16 @@ export const request = createRequest(
     // baseURL: 'https://apis.nunuapp.shop', // shop 站
     // baseURL: 'https://api.shop3c.app', // shop 站
     // baseURL: 'https://apis.shop3c.app', // shop 站
-    baseURL: 'https://api.appbites.shop', // shop 站
+    // baseURL: 'https://api.appbites.shop', // shop 站
     // baseURL: 'http://127.0.0.1:9999', // shop 站
+    // baseURL: 'https://api.bitesshop.shop', // shop 站
+    // baseURL: 'https://api.pandabuy3c.shop', // shop 站
+    // baseURL: 'https://apis.pandabuy3c.shop', // shop 站
+    // baseURL: 'https://api3.3cpandabuy.shop', // shop 站
+    // baseURL: 'https://api.mypandabuy.shop', // shop 站
+    // baseURL: 'https://api.twpandabuy.shop', // shop 站
+    // baseURL: 'https://apis.twpandabuy.shop', // shop 站
+    baseURL, // shop 站
     timeout: 20000,
   },
   {

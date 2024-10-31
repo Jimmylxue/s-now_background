@@ -6,7 +6,6 @@ export function baseFormatTime(timeString: number | string) {
 }
 
 export function convertLondonToBeijing(londonTime: string) {
-  console.log('ccddee');
   // 创建一个 Date 对象
   const date = new Date(londonTime);
 

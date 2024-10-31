@@ -37,6 +37,8 @@ export type TLetterListParams = TPageListType & {
   title?: string;
   platform?: EPlatform;
   letterId?: number;
+  startTime?: string;
+  endTime?: string;
 };
 
 export type TAddLetterParams = Omit<

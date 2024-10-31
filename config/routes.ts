@@ -18,6 +18,12 @@ export default [
     icon: 'SettingOutlined',
     component: './Address/config',
   },
+  {
+    path: '/tempLink',
+    name: '临时链接',
+    icon: 'SettingOutlined',
+    component: './TempLink',
+  },
   { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];
