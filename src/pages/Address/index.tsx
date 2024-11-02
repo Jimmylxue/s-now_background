@@ -29,7 +29,7 @@ const MemberList: React.FC = () => {
     // endTime: dayjs().endOf('day'),
   });
 
-  const { data } = useAddressList(['addressList', params], params, {
+  const { data, refetch, isFetching } = useAddressList(['addressList', params], params, {
     onSuccess: () => {},
     refetchOnWindowFocus: false,
   });
@@ -143,7 +143,10 @@ const MemberList: React.FC = () => {
       dataIndex: 'createdTime',
       search: {
         transform: (value) => {
-          return { startTime: value[0], endTime: value[1] };
+          return {
+            startTime: value[0],
+            endTime: value[1].split(' ')[0] + ' 23:59:59',
+          };
         },
       },
       renderFormItem: () => {
@@ -172,6 +175,7 @@ const MemberList: React.FC = () => {
         <ProTable<TAddressItem, API.PageParams>
           headerTitle={'用户列表'}
           key={'id'}
+          loading={isFetching}
           form={{
             ignoreRules: false,
           }}
@@ -198,7 +202,7 @@ const MemberList: React.FC = () => {
               startTime: params.startTime,
               endTime: params.endTime,
             });
-            // refetch();
+            refetch();
           }}
           dataSource={data?.result || []}
           toolBarRender={() => [

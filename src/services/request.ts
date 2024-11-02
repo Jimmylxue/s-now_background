@@ -1,7 +1,7 @@
 import { createRequest } from '@/core/request/core';
 import { message } from 'antd';
 
-export const baseURL = 'https://api.mypandabuy.shop';
+export const baseURL = 'https://api.3cpandabuy.shop';
 
 export const request = createRequest(
   {
